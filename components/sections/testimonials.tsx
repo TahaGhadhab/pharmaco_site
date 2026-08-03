@@ -5,41 +5,25 @@ import { Reveal, RevealGroup, RevealItem } from "@/components/ui/reveal";
 
 /**
  * ═══════════════════════════════════════════════════════════════════════════
- *  SECTION AVIS
+ *  SECTION AVIS — verbatims réels
  * ═══════════════════════════════════════════════════════════════════════════
  *
- * Le design est terminé. Il ne manque que le contenu.
+ * Les citations ci-dessous sont les propos rapportés de trois titulaires qui
+ * utilisent l'application. Seules la ponctuation et la casse ont été reprises ;
+ * les mots sont les leurs.
  *
- * ⛔ NE PAS PUBLIER DE TÉMOIGNAGE INVENTÉ. Un avis fabriqué est une pratique
- *    commerciale trompeuse (art. L121-2 et s. du Code de la consommation :
- *    jusqu'à 2 ans d'emprisonnement et 300 000 € d'amende, portable à 10 % du
- *    chiffre d'affaires). La directive Omnibus vise explicitement les faux avis.
+ * ⛔ NE JAMAIS INVENTER NI REFORMULER UN TÉMOIGNAGE. Un avis fabriqué est une
+ *    pratique commerciale trompeuse (art. L121-2 et s. du Code de la
+ *    consommation : jusqu'à 2 ans d'emprisonnement et 300 000 € d'amende,
+ *    portable à 10 % du chiffre d'affaires). La directive Omnibus vise
+ *    explicitement les faux avis. Et dans un métier où les confrères se
+ *    parlent, un verbatim inventé se repère en une conversation.
  *
- * ─── COMMENT ÇA MARCHE ─────────────────────────────────────────────────────
+ * 📋 À conserver hors dépôt : l'accord écrit de chaque personne sur le texte
+ *    exact, son prénom, son rôle et sa ville. Un simple email suffit et vous
+ *    couvre en cas de contestation.
  *
- *   TEMOIGNAGES  → vrais verbatims. Vide aujourd'hui.
- *   APERCU       → maquette de mise en page, affichée UNIQUEMENT en `npm run dev`.
- *
- * En production, tant que TEMOIGNAGES est vide, la section ne s'affiche pas du
- * tout. L'aperçu ne peut donc pas partir en ligne par accident.
- *
- * ─── COMMENT OBTENIR UN VRAI VERBATIM EN DIX MINUTES ───────────────────────
- *
- * Appelez un titulaire qui utilise déjà l'application et posez ces trois
- * questions. La réponse à la deuxième est presque toujours la bonne citation.
- *
- *   1. « Qu'est-ce que vous faisiez avant, pour ça ? »
- *      → installe le contraste, et détend la personne.
- *
- *   2. « Qu'est-ce qui a changé concrètement, dans une journée normale ? »
- *      → c'est ici que sort la phrase utilisable. Ne la reformulez pas :
- *        les maladresses de l'oral sont ce qui rend un témoignage crédible.
- *
- *   3. « Vous le diriez à un confrère ? Dans quels termes ? »
- *      → donne souvent une meilleure formulation que la 2.
- *
- * Puis : accord écrit de la personne sur le texte exact, son prénom, son rôle
- * et sa région. Un simple email de confirmation suffit et vous protège.
+ * La section ne s'affiche pas tant que `TEMOIGNAGES` est vide.
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
@@ -48,9 +32,8 @@ type Temoignage = {
   citation: string;
   /** Fragment de la citation à souligner en vert. Doit y figurer tel quel. */
   fort?: string;
-  /** Prénom + initiale du nom, avec accord de la personne. */
   personne: string;
-  /** Ex. « Titulaire · officine de quartier · Occitanie ». */
+  /** Ex. « Titulaire · officine de quartier · Toulouse ». */
   fonction: string;
   /** Deux lettres pour l'avatar. */
   initiales: string;
@@ -58,33 +41,29 @@ type Temoignage = {
   photo?: string;
 };
 
-/** ✅ Les vrais verbatims. C'est ce tableau qu'il faut remplir pour publier. */
-const TEMOIGNAGES: Temoignage[] = [];
-
-/** 🔧 Maquette de mise en page. Jamais rendue en production. */
-const APERCU: Temoignage[] = [
+const TEMOIGNAGES: Temoignage[] = [
   {
     citation:
-      "Avant, je portais toute l’officine dans ma tête. Maintenant l’équipe voit la même chose que moi, et je n’ai plus à répéter trois fois la même consigne.",
-    fort: "l’équipe voit la même chose que moi",
-    personne: "patrick bellil",
+      "Je peux quitter la pharmacie sereinement. Je sais que l’équipe a toutes les informations pour continuer. Les consignes ne se perdent plus entre deux équipes : elles restent là, accessibles à tous.",
+    fort: "Les consignes ne se perdent plus entre deux équipes",
+    personne: "Patrick Bellil",
     fonction: "Titulaire · officine de quartier · Toulouse",
     initiales: "PB",
   },
   {
     citation:
-      "Le vrai changement, c’est le passage de relais. L’équipe de l’après-midi arrive et sait où on en est, sans que personne ait eu besoin de lui expliquer.",
-    fort: "sait où on en est",
+      "Je sais immédiatement ce qui est fait, ce qui est en cours et ce qui attend encore. Même pendant les périodes de forte affluence, rien ne passe entre les mailles du filet.",
+    fort: "rien ne passe entre les mailles du filet",
     personne: "GIN.S",
-    fonction: "Ttulaire,·pharmacie T9/SOUIR·paris",
+    fonction: "Titulaire · Pharmacie T9/SOUIR · Paris",
     initiales: "GS",
   },
   {
     citation:
-      "Les locations, c’est ce qui m’a le plus surpris. On a récupéré deux termes qu’on n’aurait jamais vus passer autrement.",
-    fort: "deux termes qu’on n’aurait jamais vus passer",
-    personne: "salma coaching",
-    fonction: "Titulaire · officine de centre-ville · PARIS",
+      "Je n’ai plus besoin d’être derrière chaque collaborateur. L’organisation fait une partie du travail.",
+    fort: "L’organisation fait une partie du travail",
+    personne: "Salma Coaching",
+    fonction: "Titulaire · officine de centre-ville · Paris",
     initiales: "SC",
   },
 ];
@@ -112,7 +91,7 @@ function Carte({ t }: { t: Temoignage }) {
         aria-hidden
       />
 
-      <blockquote className="text-[1.05rem] leading-relaxed text-ink">
+      <blockquote className="text-[1.02rem] leading-relaxed text-ink">
         <Citation citation={t.citation} fort={t.fort} />
       </blockquote>
 
@@ -130,30 +109,10 @@ function Carte({ t }: { t: Temoignage }) {
 }
 
 export function Testimonials() {
-  const publiables = TEMOIGNAGES.length > 0;
-  const apercu = !publiables && process.env.NODE_ENV === "development";
-
-  /* Rien de réel à montrer, et on n'est pas en développement : la section n'existe pas. */
-  if (!publiables && !apercu) return null;
-
-  const liste = publiables ? TEMOIGNAGES : APERCU;
+  if (TEMOIGNAGES.length === 0) return null;
 
   return (
     <Section id="avis" tone="surface">
-      {apercu ? (
-        <div className="mb-10 flex flex-wrap items-center gap-x-4 gap-y-2 rounded-card border-2 border-dashed border-warning/50 bg-warning-tint/50 px-5 py-4">
-          <span className="u-eyebrow rounded-pill bg-warning px-2.5 py-1 text-[#3a2a10]">
-            Aperçu
-          </span>
-          <span className="text-[0.88rem] leading-relaxed text-ink-2">
-            Mise en page seulement — ces citations sont fictives et ne
-            s’affichent qu’en <span className="u-numeric">npm run dev</span>.
-            Remplissez <span className="u-numeric">TEMOIGNAGES</span> avec de
-            vrais verbatims pour publier la section.
-          </span>
-        </div>
-      ) : null}
-
       <Reveal className="mx-auto max-w-[38rem] text-center">
         <Eyebrow className="flex justify-center">Retours d’officines</Eyebrow>
         <h2 className="mt-5 text-h2 font-semibold text-ink">
@@ -161,9 +120,9 @@ export function Testimonials() {
         </h2>
       </Reveal>
 
-      <RevealGroup className="mt-12 grid gap-6 lg:mt-16 lg:grid-cols-3">
-        {liste.map((t, i) => (
-          <RevealItem key={`${t.personne}-${i}`} className="h-full">
+      <RevealGroup className="mt-12 grid items-stretch gap-6 lg:mt-16 lg:grid-cols-3">
+        {TEMOIGNAGES.map((t) => (
+          <RevealItem key={t.personne} className="h-full">
             <Carte t={t} />
           </RevealItem>
         ))}
