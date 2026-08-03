@@ -1,26 +1,315 @@
 @import "tailwindcss";
 
+/* ==========================================================================
+   PharmacoWork — Design system « Clean Clinical »
+   Valeurs issues du §11 de LANDING_PAGE_CONTEXT.md.
+   Ne pas inventer de couleur : tout accent passe par --color-primary-*.
+   ========================================================================== */
+
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+
+  /* Vert de marque — l'unique accent du produit */
+  --pw-primary: #1b9d58;
+  --pw-primary-strong: #116f3e;
+  --pw-primary-deep: #15894c;
+  --pw-primary-tint: #d2f0de;
+  --pw-primary-tint-2: #eaf8f0;
+
+  /* Neutres et surfaces */
+  --pw-page: #f7f9f6;
+  --pw-surface: #ffffff;
+  --pw-surface-muted: #f1f4f1;
+  --pw-border: #e8ecea;
+  --pw-text: #0e1414;
+  --pw-text-2: #3d4646;
+  --pw-text-3: #5a6563;
+  --pw-text-4: #7f8889;
+  --pw-placeholder: #a8aead;
+
+  /* Post-it — signifiant du désordre, pas une couleur de marque.
+     N'existe que dans la section « Le constat ». Ne pas l'employer ailleurs :
+     l'accent unique du produit reste le vert. */
+  --pw-postit: #ffd84d;
+  --pw-postit-edge: #e8b70a;
+  --pw-postit-ink: #4a3a00;
+
+  /* Sémantique */
+  --pw-danger: #e11d48;
+  --pw-danger-tint: #fad7d7;
+  --pw-warning: #f59e0b;
+  --pw-warning-tint: #fbe5cb;
+  --pw-info: #1a74ce;
+  --pw-info-tint: #cfe4fa;
+  --pw-success: #16a34a;
+  --pw-success-tint: #d2f0de;
+
+  /* Ombres — §11 : douces, jamais dures */
+  --pw-shadow-card: 0 1px 2px rgba(14, 20, 20, 0.05);
+  --pw-shadow-raised: 0 4px 16px rgba(14, 20, 20, 0.06),
+    0 1px 2px rgba(14, 20, 20, 0.04);
+  --pw-shadow-float: 0 18px 48px -12px rgba(14, 20, 20, 0.14),
+    0 2px 8px rgba(14, 20, 20, 0.04);
+  --pw-shadow-cta: 0 8px 18px rgba(27, 157, 88, 0.35);
+}
+
+.dark {
+  color-scheme: dark;
+
+  --pw-primary: #2bb86c;
+  --pw-primary-strong: #48d089;
+  --pw-primary-deep: #7ee0ab;
+  --pw-primary-tint: #123723;
+  --pw-primary-tint-2: #0e2619;
+
+  --pw-page: #0b0f0e;
+  --pw-surface: #131918;
+  --pw-surface-muted: #1a2120;
+  --pw-border: #242d2b;
+  --pw-text: #edf2f0;
+  --pw-text-2: #b6c1be;
+  --pw-text-3: #8e9a96;
+  --pw-text-4: #6f7a77;
+  --pw-placeholder: #5a6462;
+
+  --pw-danger: #fb7185;
+  --pw-danger-tint: #3d1720;
+  --pw-warning: #fbbf24;
+  --pw-warning-tint: #3a2a10;
+  --pw-info: #60a5fa;
+  --pw-info-tint: #12263f;
+  --pw-success: #4ade80;
+  --pw-success-tint: #123723;
+
+  --pw-shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --pw-shadow-raised: 0 4px 16px rgba(0, 0, 0, 0.45), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --pw-shadow-float: 0 18px 48px -12px rgba(0, 0, 0, 0.6), 0 2px 8px rgba(0, 0, 0, 0.4);
+  --pw-shadow-cta: 0 8px 18px rgba(43, 184, 108, 0.28);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-primary: var(--pw-primary);
+  --color-primary-strong: var(--pw-primary-strong);
+  --color-primary-deep: var(--pw-primary-deep);
+  --color-primary-tint: var(--pw-primary-tint);
+  --color-primary-tint-2: var(--pw-primary-tint-2);
+
+  --color-page: var(--pw-page);
+  --color-surface: var(--pw-surface);
+  --color-surface-muted: var(--pw-surface-muted);
+  --color-line: var(--pw-border);
+  --color-ink: var(--pw-text);
+  --color-ink-2: var(--pw-text-2);
+  --color-ink-3: var(--pw-text-3);
+  --color-ink-4: var(--pw-text-4);
+  --color-placeholder: var(--pw-placeholder);
+
+  --color-postit: var(--pw-postit);
+  --color-postit-edge: var(--pw-postit-edge);
+  --color-postit-ink: var(--pw-postit-ink);
+
+  --color-danger: var(--pw-danger);
+  --color-danger-tint: var(--pw-danger-tint);
+  --color-warning: var(--pw-warning);
+  --color-warning-tint: var(--pw-warning-tint);
+  --color-info: var(--pw-info);
+  --color-info-tint: var(--pw-info-tint);
+  --color-success: var(--pw-success);
+  --color-success-tint: var(--pw-success-tint);
+
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* Rayons — §11 : cartes 14, champs 10, pilules 999, feuilles 24 */
+  --radius-field: 10px;
+  --radius-card: 14px;
+  --radius-sheet: 24px;
+  --radius-pill: 999px;
+
+  --shadow-card: var(--pw-shadow-card);
+  --shadow-raised: var(--pw-shadow-raised);
+  --shadow-float: var(--pw-shadow-float);
+  --shadow-cta: var(--pw-shadow-cta);
+
+  /* Échelle typographique fluide */
+  --text-display: clamp(2.25rem, 1.35rem + 3.9vw, 4.25rem);
+  --text-display--line-height: 1.02;
+  --text-display--letter-spacing: -0.033em;
+  --text-h2: clamp(1.75rem, 1.15rem + 2.4vw, 2.9rem);
+  --text-h2--line-height: 1.1;
+  --text-h2--letter-spacing: -0.026em;
+  --text-h3: clamp(1.3rem, 1.05rem + 1.05vw, 1.85rem);
+  --text-h3--line-height: 1.18;
+  --text-h3--letter-spacing: -0.018em;
+  --text-lead: clamp(1.0625rem, 1rem + 0.4vw, 1.28rem);
+  --text-lead--line-height: 1.55;
+
+  --container-page: 1200px;
+
+  /* Courbes — une seule famille, calme */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --animate-marquee: marquee 46s linear infinite;
+  --animate-halo: halo 4.5s var(--ease-in-out-soft) infinite;
+  --animate-sweep: sweep 2.6s var(--ease-in-out-soft) infinite;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Pulsation « en poste » — remplacée par un halo fixe en reduced-motion (§11) */
+@keyframes halo {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.6);
+  }
+}
+
+@keyframes sweep {
+  0% {
+    transform: translateY(-110%);
+  }
+  55%,
+  100% {
+    transform: translateY(210%);
+  }
+}
+
+/* Bordure verte qui respire — attire l'œil sans clignoter.
+   Remplace le `ring-1 ring-line` de l'élément : les deux passent par
+   `box-shadow` et se remplaceraient l'un l'autre. */
+@keyframes ring-glow {
+  0%,
+  100% {
+    box-shadow:
+      inset 0 0 0 1px color-mix(in oklab, var(--pw-primary) 28%, var(--pw-border)),
+      0 0 0 0 transparent;
+  }
+  50% {
+    box-shadow:
+      inset 0 0 0 1px color-mix(in oklab, var(--pw-primary) 80%, transparent),
+      0 0 22px -6px color-mix(in oklab, var(--pw-primary) 42%, transparent);
+  }
+}
+
+@layer base {
+  * {
+    border-color: var(--pw-border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background-color: var(--pw-page);
+    color: var(--pw-text);
+    font-family: var(--font-geist-sans), system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: var(--pw-primary-tint);
+    color: var(--pw-primary-strong);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--pw-primary);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+}
+
+@layer utilities {
+  /* Micro-libellé Geist Mono — la signature visuelle du produit (§11) */
+  .u-eyebrow {
+    font-family: var(--font-geist-mono), ui-monospace, monospace;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .u-numeric {
+    font-family: var(--font-geist-mono), ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+  }
+
+  .u-mask-fade-x {
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 8%,
+      black 92%,
+      transparent
+    );
+  }
+
+  /* Bordure verte respirante, pour un encart qu'on veut faire remarquer.
+     Le style de base est déjà lumineux : en prefers-reduced-motion, l'animation
+     est neutralisée et c'est lui qui reste — un halo fixe, pas un signal perdu (§11). */
+  .u-ring-glow {
+    box-shadow:
+      inset 0 0 0 1px color-mix(in oklab, var(--pw-primary) 58%, transparent),
+      0 0 18px -6px color-mix(in oklab, var(--pw-primary) 32%, transparent);
+    animation: ring-glow 4.5s var(--ease-in-out-soft) infinite;
+  }
+
+  /* Trame très discrète pour les zones « produit » */
+  .u-grid-faint {
+    background-image: linear-gradient(var(--pw-border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--pw-border) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black, transparent);
+  }
+}
+
+/* §11 : l'application respecte prefers-reduced-motion — la landing page aussi.
+   On neutralise le déplacement, jamais le signal : le halo devient fixe. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .motion-halo {
+    opacity: 0.7 !important;
+    transform: scale(1.35) !important;
+  }
 }

@@ -33,6 +33,10 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# Captures écartées : elles contiennent des noms de patients (données de santé).
+# Ne jamais les remettre dans public/ — tout y est servi publiquement.
+/.screens-prives
+
 # vercel
 .vercel
 

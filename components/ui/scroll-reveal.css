@@ -1,0 +1,34 @@
+/* ScrollReveal — révélation du texte mot à mot au défilement.
+   La typographie n'est PAS fixée ici : elle vient du design system, via
+   `textClassName`. Ce fichier ne porte que ce qui est structurel. */
+
+.scroll-reveal {
+  margin: 0;
+}
+
+.scroll-reveal-text {
+  /* Repli si le composant est utilisé sans classe de typographie. */
+  line-height: 1.45;
+  text-wrap: pretty;
+}
+
+.scroll-reveal .word {
+  display: inline-block;
+  /* Évite qu'un mot flouté ne déborde sur sa ligne. */
+  will-change: opacity, filter;
+}
+
+/* §11 : prefers-reduced-motion est respecté partout sur ce site.
+   Filet de sécurité CSS, en plus de la neutralisation JS. */
+@media (prefers-reduced-motion: reduce) {
+  .scroll-reveal {
+    transform: none !important;
+    rotate: none !important;
+  }
+
+  .scroll-reveal .word {
+    opacity: 1 !important;
+    filter: none !important;
+    will-change: auto;
+  }
+}
