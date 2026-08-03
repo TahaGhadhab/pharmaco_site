@@ -5,7 +5,6 @@ import { PostitWall } from "@/components/sections/postit-wall";
 import { Simulator } from "@/components/sections/simulator";
 import { Founders } from "@/components/sections/founders";
 import { Features } from "@/components/sections/features";
-import { Statement } from "@/components/sections/statement";
 import { Modules } from "@/components/sections/modules";
 import { Gallery } from "@/components/sections/gallery";
 import { Testimonials } from "@/components/sections/testimonials";
@@ -37,7 +36,6 @@ export default function Home() {
         <Simulator />
         <Founders />
         <Features />
-        <Statement />
         <Modules />
         <Gallery />
         <Testimonials />

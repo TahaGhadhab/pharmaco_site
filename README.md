@@ -78,13 +78,12 @@ lib/
 | 5 | `simulator` | **Le pivot de conversion.** Ce que le désordre coûte |
 | 6 | `founders` | « Conçu derrière un comptoir, pas dans un open space. » |
 | 7 | `features` | 4 cartes en bande horizontale, explication au survol |
-| 8 | `statement` | Le manifeste — révélation mot à mot (§9 du contexte) |
-| 9 | `modules` | Les 15 modules, en grille |
-| 10 | `gallery` | Bande défilante de 5 écrans |
-| 11 | `testimonials` | **En attente de verbatims réels** — invisible en production |
-| 12 | `final-cta` | « Rien ne se perd. » |
-| 13 | `faq` | 8 accordéons + JSON-LD `FAQPage` — **après** le CTA, volontairement |
-| 14 | `site-footer` | Maillage + dernier mot de positionnement |
+| 8 | `modules` | Les 15 modules, en grille |
+| 9 | `gallery` | Bande défilante de 5 écrans |
+| 10 | `testimonials` | **En attente de verbatims réels** — invisible en production |
+| 11 | `final-cta` | « Rien ne se perd. » |
+| 12 | `faq` | 8 accordéons + JSON-LD `FAQPage` — **après** le CTA, volontairement |
+| 13 | `site-footer` | Maillage + dernier mot de positionnement |
 
 > **`features` — hauteur fixe.** La section tenait sur quatre blocs texte/visuel
 > empilés. Elle tient désormais sur une rangée de 27 rem : au repos on ne voit que
@@ -119,21 +118,11 @@ Obtenez un accord écrit sur le texte exact, le prénom, le rôle et la région.
 > consommation : jusqu'à 2 ans d'emprisonnement et 300 000 € d'amende, portable
 > à 10 % du chiffre d'affaires. La directive Omnibus vise explicitement les faux avis.
 
-### `<ScrollReveal>` — révélation du texte au défilement
-
-D'après le composant React Bits, adapté sur quatre points : `prefers-reduced-motion`
-respecté, nettoyage cantonné à l'instance (`gsap.context`), balise configurable (`p` par
-défaut, pas `h2`), typographie pilotée par le design system.
-
-```tsx
-<ScrollReveal textClassName="text-h2 font-semibold text-ink" baseRotation={1.5}>
-  Une phrase qu'on veut faire lire en entier.
-</ScrollReveal>
-```
-
-**À employer avec parcimonie** — un seul emplacement aujourd'hui : `statement`.
-L'effet ne vaut que s'il reste exceptionnel : sur des puces ou des cartes, il devient du bruit.
-`children` doit être une **chaîne** pour être découpé en mots.
+> **`<ScrollReveal>` et `gsap` ont été retirés le 4 août 2026.** Le composant
+> n'était employé que par la section `statement` (« Face aux outils génériques »),
+> supprimée à la demande du client. Garder une seconde bibliothèque d'animation
+> pour du code mort n'avait pas de sens : `motion` couvre tout le reste du site.
+> Pour le récupérer : `npm i gsap` puis `git checkout 986f95f -- components/ui/scroll-reveal.tsx components/ui/scroll-reveal.css`.
 
 ### `<LogoLoop>` — défilement continu
 

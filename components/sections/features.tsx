@@ -91,7 +91,8 @@ function Carte({
       onClick={() => (actif ? onDesactiver() : onActiver())}
       aria-expanded={actif}
       className={cn(
-        "group relative h-[27rem] w-[16.5rem] shrink-0 snap-start overflow-hidden text-left",
+        "group relative shrink-0 snap-start overflow-hidden text-left",
+        "h-[30rem] w-[18rem] sm:h-[33rem] sm:w-[19.5rem]",
         "rounded-sheet bg-primary-tint-2 ring-1 ring-line dark:bg-surface-muted",
         "transition-[box-shadow,transform] duration-300 ease-(--ease-out-soft)",
         actif && "shadow-float",
@@ -102,11 +103,11 @@ function Carte({
       {/* La capture — elle glisse doucement vers le haut quand le volet monte,
           pour qu'on la voie encore entièrement au lieu d'être coupée. */}
       <motion.div
-        animate={reduced ? undefined : { y: actif ? -26 : 0 }}
+        animate={reduced ? undefined : { y: actif ? -30 : 0 }}
         transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
-        className="relative flex justify-center px-6 pt-7"
+        className="relative flex justify-center px-4 pt-7 sm:px-5"
       >
-        <ScreenFrame slot={slot} className="max-w-[176px]" />
+        <ScreenFrame slot={slot} className="max-w-[224px] sm:max-w-[248px]" />
       </motion.div>
 
       {/* Barre au repos : le seul texte visible tant qu'on ne survole pas. */}
@@ -135,10 +136,10 @@ function Carte({
         )}
       >
         <span className="u-eyebrow text-primary-deep">{eyebrow}</span>
-        <span className="text-[1.02rem] font-semibold leading-snug text-ink">
+        <span className="text-[1.1rem] font-semibold leading-snug text-ink">
           {title}
         </span>
-        <span className="text-[0.85rem] leading-relaxed text-ink-2">
+        <span className="text-[0.9rem] leading-relaxed text-ink-2">
           {description}
         </span>
         <span className="u-numeric mt-1 text-[0.68rem] text-ink-4">
@@ -164,24 +165,29 @@ export function Features() {
         </Reveal>
       </div>
 
+      {/* La piste est `w-max mx-auto` dans un conteneur qui défile : les marges
+          automatiques centrent la rangée quand elle tient, et retombent à zéro
+          quand elle déborde. `justify-center` sur le conteneur lui-même aurait
+          rogné la première carte au lieu de la laisser atteignable. */}
       <div
         className={cn(
-          "mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth",
+          "mt-10 snap-x snap-mandatory overflow-x-auto scroll-smooth",
           "px-4 pb-4 sm:px-6",
-          "lg:justify-center lg:overflow-visible",
           "[scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
         )}
       >
-        {FEATURES.map((feature, index) => (
-          <Carte
-            key={feature.eyebrow}
-            feature={feature}
-            index={index}
-            actif={actif === index}
-            onActiver={() => setActif(index)}
-            onDesactiver={() => setActif((v) => (v === index ? null : v))}
-          />
-        ))}
+        <div className="mx-auto flex w-max gap-4 sm:gap-5">
+          {FEATURES.map((feature, index) => (
+            <Carte
+              key={feature.eyebrow}
+              feature={feature}
+              index={index}
+              actif={actif === index}
+              onActiver={() => setActif(index)}
+              onDesactiver={() => setActif((v) => (v === index ? null : v))}
+            />
+          ))}
+        </div>
       </div>
     </Section>
   );
