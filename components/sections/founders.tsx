@@ -34,7 +34,7 @@ const PREUVES = [
 
 export function Founders() {
   return (
-    <Section id="pourquoi" tone="page">
+    <Section id="pourquoi" tone="surface">
       <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
         <Reveal>
           <Eyebrow>Pourquoi nous</Eyebrow>

@@ -148,7 +148,7 @@ function PinnedTour() {
   return (
     <div
       ref={sectionRef}
-      className="relative bg-surface"
+      className="relative bg-page"
       style={{ height: `calc(100vh + ${distance}px)` }}
     >
       <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden">
@@ -226,7 +226,7 @@ function ScrollableTour() {
     "inline-flex size-11 items-center justify-center rounded-pill bg-surface text-ink-2 shadow-card ring-1 ring-line transition-[opacity,transform,background-color] duration-200 ease-(--ease-out-soft) hover:-translate-y-0.5 hover:bg-surface-muted disabled:pointer-events-none disabled:opacity-35";
 
   return (
-    <Section tone="surface" containerClassName="max-w-none px-0">
+    <Section tone="page" containerClassName="max-w-none px-0">
       <div className="mx-auto w-full max-w-(--container-page) px-4 sm:px-6">
         <Reveal>
           <div className="flex flex-wrap items-end justify-between gap-6">
