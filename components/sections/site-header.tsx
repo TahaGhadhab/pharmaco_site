@@ -113,9 +113,12 @@ export function SiteHeader() {
           <Logo />
         </Link>
 
+        {/* Élément de flux, pas `absolute left-1/2` : une nav hors flux peut
+            recouvrir le bloc de droite quand la fenêtre se resserre — c'est ce
+            qui masquait le sélecteur de thème. En flex, elle se comprime. */}
         <nav
           aria-label="Navigation principale"
-          className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-0.5 lg:flex"
+          className="hidden min-w-0 flex-1 items-center justify-center gap-0.5 lg:flex"
         >
           {site.nav.map((item) => (
             <Link
@@ -128,9 +131,7 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        <div className="flex shrink-0 items-center gap-1">
-          <ThemeToggle />
-
+        <div className="relative z-10 flex shrink-0 items-center gap-1">
           {/* Officine déjà en place : lien magique. Discret, ce n'est pas le
               parcours que la page cherche à provoquer. */}
           <Link
@@ -146,6 +147,14 @@ export function SiteHeader() {
           >
             {site.cta.primary}
           </ButtonLink>
+
+          {/* Bascule clair/sombre, à l'extrême droite et détachée par un filet :
+              c'est un réglage, pas un élément de navigation. */}
+          <span
+            aria-hidden
+            className="mx-1.5 hidden h-5 w-px bg-line sm:block"
+          />
+          <ThemeToggle />
 
           <button
             type="button"
