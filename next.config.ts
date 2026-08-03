@@ -13,10 +13,24 @@ import type { NextConfig } from "next";
  * dynamique — au prix de la génération statique. La directive garde malgré tout
  * sa valeur : aucune origine externe ne peut charger de script, `object-src` est
  * fermé et `base-uri` verrouillé, ce qui coupe les vecteurs d'exfiltration.
+ *
+ * `'unsafe-eval'` est ajouté en développement seulement — voir plus bas.
  */
+/**
+ * `'unsafe-eval'` **uniquement en développement**.
+ *
+ * React s'en sert en mode dev pour ses outils de débogage — reconstruction des
+ * piles d'appel, rafraîchissement à chaud. Sans cette exception, la console
+ * affiche « eval() is not supported in this environment » et les traces
+ * deviennent inexploitables.
+ *
+ * React n'appelle jamais `eval()` en production : la directive y reste fermée.
+ */
+const isDev = process.env.NODE_ENV === "development";
+
 const CSP = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline'",
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   "font-src 'self' data:",

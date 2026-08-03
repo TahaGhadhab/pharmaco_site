@@ -39,10 +39,14 @@ import { cn } from "@/lib/utils";
 const TOUR: { slot: ScreenSlot; caption: string }[] = [
   { slot: screens.taches, caption: "Tâches assignées, avec échéance" },
   { slot: screens.commandes, caption: "Commandes fournisseurs suivies" },
-  { slot: screens.qualite, caption: "Traçabilité qualité horodatée" },
   { slot: screens.gestionRh, caption: "Équipe, sièges et permissions" },
   { slot: screens.chat, caption: "Messagerie interne de l'équipe" },
 ];
+
+/* Le sous-titre suit le nombre d'écrans : pas de « Cinq » qui traîne le jour
+   où l'on en retire un. */
+const NOMBRES = ["", "Un", "Deux", "Trois", "Quatre", "Cinq", "Six", "Sept"];
+const SOUS_TITRE = `${NOMBRES[TOUR.length] ?? TOUR.length} écrans, pris tels quels.`;
 
 /** Marge conservée à droite en fin de course, pour que le dernier écran respire. */
 const TAIL = 96;
@@ -233,7 +237,7 @@ function ScrollableTour() {
             <SectionHeading
               eyebrow="Le tour de l'application"
               title="Regardez-la travailler."
-              lead="Cinq écrans, pris tels quels."
+              lead={SOUS_TITRE}
             />
             <div className="hidden gap-2 md:flex">
               <button
