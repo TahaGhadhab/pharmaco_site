@@ -76,15 +76,20 @@ lib/
 | 3 | `proof-strip` | Bandeau de réassurance, 4 mentions |
 | 4 | `postit-wall` | **Le constat.** 6 post-its retournables → la fiche PharmacoWork |
 | 5 | `simulator` | **Le pivot de conversion.** Ce que le désordre coûte |
-| 6 | `features` | 4 blocs alternés — location, CIP13, ANSM, saisie automatique |
-| 7 | `statement` | Le manifeste — révélation mot à mot (§9 du contexte) |
-| 8 | `modules` | Les 15 modules, en grille |
-| 9 | `gallery` | Bande défilante de 5 écrans |
-| 10 | `founders` | « Conçu derrière un comptoir, pas dans un open space. » |
+| 6 | `founders` | « Conçu derrière un comptoir, pas dans un open space. » |
+| 7 | `features` | 4 cartes en bande horizontale, explication au survol |
+| 8 | `statement` | Le manifeste — révélation mot à mot (§9 du contexte) |
+| 9 | `modules` | Les 15 modules, en grille |
+| 10 | `gallery` | Bande défilante de 5 écrans |
 | 11 | `testimonials` | **En attente de verbatims réels** — invisible en production |
 | 12 | `final-cta` | « Rien ne se perd. » |
 | 13 | `faq` | 8 accordéons + JSON-LD `FAQPage` — **après** le CTA, volontairement |
 | 14 | `site-footer` | Maillage + dernier mot de positionnement |
+
+> **`features` — hauteur fixe.** La section tenait sur quatre blocs texte/visuel
+> empilés. Elle tient désormais sur une rangée de 27 rem : au repos on ne voit que
+> les captures, au survol un volet monte du bas avec le titre et deux phrases.
+> Ajouter une cinquième fonctionnalité allongera la rangée, jamais la page.
 
 > **Sections retirées le 3 août 2026**, à la demande du client : `roles` (les 7 rôles
 > en onglets), `trust` (« Un groupe WhatsApp n'est pas un outil de travail » et les

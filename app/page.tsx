@@ -3,11 +3,11 @@ import { Hero } from "@/components/sections/hero";
 import { ProofStrip } from "@/components/sections/proof-strip";
 import { PostitWall } from "@/components/sections/postit-wall";
 import { Simulator } from "@/components/sections/simulator";
+import { Founders } from "@/components/sections/founders";
 import { Features } from "@/components/sections/features";
 import { Statement } from "@/components/sections/statement";
 import { Modules } from "@/components/sections/modules";
 import { Gallery } from "@/components/sections/gallery";
-import { Founders } from "@/components/sections/founders";
 import { Testimonials } from "@/components/sections/testimonials";
 import { FinalCta } from "@/components/sections/final-cta";
 import { Faq } from "@/components/sections/faq";
@@ -35,11 +35,11 @@ export default function Home() {
         <ProofStrip />
         <PostitWall />
         <Simulator />
+        <Founders />
         <Features />
         <Statement />
         <Modules />
         <Gallery />
-        <Founders />
         <Testimonials />
         <FinalCta />
         <Faq />

@@ -1,28 +1,31 @@
-import type { ReactNode } from "react";
-import { Check } from "lucide-react";
+"use client";
+
+import { useState, type ReactNode } from "react";
+import { motion, useReducedMotion } from "motion/react";
+import { Plus } from "lucide-react";
 import { Section, SectionHeading } from "@/components/ui/primitives";
 import { Reveal } from "@/components/ui/reveal";
 import { ScreenFrame } from "@/components/ui/screen-frame";
-import { screens } from "@/lib/screens";
-import type { ScreenSlot } from "@/lib/screens";
+import { screens, type ScreenSlot } from "@/lib/screens";
 import { cn } from "@/lib/utils";
 
 /* ══════════════════════════════════════════════════════════════════════════
-   Fonctionnalités phares — quatre blocs alternés texte / visuel.
+   Fonctionnalités phares — bande horizontale, hauteur fixe.
 
-   Ordre imposé par le §7 de ARGUMENTAIRE_VENTE.md :
-   l'argent d'abord (location), la crédibilité métier ensuite (CIP13),
-   puis l'ANSM, puis la saisie automatique.
+   L'ancienne version empilait quatre blocs texte/visuel : plus de 2 000 px de
+   défilement vertical pour quatre idées. Ici, les quatre tiennent sur une seule
+   rangée d'environ 430 px de haut. La page ne s'allonge plus.
 
-   Règle de rédaction (AGENTS.md) : un titre, deux phrases, trois bénéfices.
-   Jamais une fonctionnalité nue dans la liste à coches.
+   Au repos : la capture, et rien d'autre. Au survol (ou au clavier, ou au
+   toucher) : un volet monte du bas et donne le titre et deux phrases.
+
+   Ordre imposé par le §7 de ARGUMENTAIRE_VENTE.md — l'argent d'abord.
    ══════════════════════════════════════════════════════════════════════════ */
 
 type Feature = {
   eyebrow: string;
   title: string;
   description: ReactNode;
-  points: readonly string[];
   slot: ScreenSlot;
 };
 
@@ -31,12 +34,7 @@ const FEATURES: readonly Feature[] = [
     eyebrow: "Locations",
     title: "Le matériel ne se rend pas tant qu'il n'est pas payé.",
     description:
-      "Chaque location de matériel médical est découpée en périodes qui avancent avec le calendrier. Le solde restant dû est recalculé à chaque paiement enregistré.",
-    points: [
-      "Le matériel ne ressort pas sans que la caisse suive.",
-      "Le montant qui manque est affiché, pas à retrouver.",
-      "Plus d'impayé que personne n'a vu.",
-    ],
+      "Chaque location est découpée en périodes qui avancent avec le calendrier. La restitution est refusée tant que le solde n'est pas nul — et le montant qui manque est affiché.",
     slot: screens.location,
   },
   {
@@ -44,128 +42,144 @@ const FEATURES: readonly Feature[] = [
     title: "Scannez la boîte. Le nom s'écrit tout seul.",
     description: (
       <>
-        Le référentiel national des médicaments est embarqué :{" "}
-        <span className="u-numeric font-medium text-ink">
-          {"20 869"} présentations
-        </span>{" "}
-        identifiées par leur code CIP13. La caméra du téléphone lit le
-        code-barres EAN-13 et le Data Matrix GS1.
+        <span className="u-numeric font-medium text-ink">{"20 869"}</span>{" "}
+        présentations embarquées, lues au code-barres EAN-13 ou au Data Matrix
+        GS1. Aucun lecteur à acheter : le téléphone de l&rsquo;équipe suffit.
       </>
     ),
-    points: [
-      "Aucun lecteur à acheter : le téléphone de l'équipe suffit.",
-      "Plus de faute de frappe sur une dénomination.",
-      "L'inverse marche aussi : tapez le début du nom, le CIP13 se remplit.",
-    ],
     slot: screens.scan,
   },
   {
     eyebrow: "Ruptures nationales",
     title: "Cette nuit, l'ANSM vous a répondu.",
     description:
-      "Le fichier officiel de disponibilité des médicaments est rechargé chaque nuit. Vous êtes prévenu qu'un médicament fait l'objet d'une tension — mais seulement s'il s'agit d'un médicament que vous suivez déjà.",
-    points: [
-      "Une rupture ouverte ou une alternative proposée : voilà ce qui déclenche l'alerte.",
-      "Sans ce filtre : ~474 alertes d'un coup. Avec : une information.",
-      "Une alternative qui part elle-même en tension, vous le savez le matin.",
-    ],
+      "Le fichier officiel de disponibilité est rechargé chaque nuit. Mais vous n'êtes prévenu qu'un médicament fait l'objet d'une tension que s'il s'agit d'un médicament que vous suivez déjà.",
     slot: screens.ruptures,
   },
   {
     eyebrow: "Saisie automatique",
-    title: "Le seul outil de votre officine qui écrit à votre place.",
+    title: "L'agenda écrit à votre place.",
     description:
-      "L'agenda n'a aucun champ de saisie. Il lit les échéances de tâches, les livraisons attendues, les fins de location et les ordonnances à préparer, là où elles sont déjà.",
-    points: [
-      "Un agenda qu'on n'alimente pas est un agenda qui n'est jamais faux.",
-      "Les heures d'arrivée et de départ montent du pointage. Personne ne les note.",
-      "La traçabilité se produit pendant le travail, pas la veille de l'inspection.",
-    ],
+      "Aucun champ de saisie : il lit vos échéances, vos livraisons et vos fins de location là où elles sont déjà. Les heures réelles montent du pointage.",
     slot: screens.planning,
   },
 ];
 
-/* Socle du visuel : la capture ne flotte jamais seule sur le fond de page. */
-function ScreenStage({ slot }: { slot: ScreenSlot }) {
-  return (
-    <div className="relative flex w-full justify-center overflow-hidden rounded-sheet bg-primary-tint-2 px-6 py-10 ring-1 ring-line sm:py-14 dark:bg-surface-muted">
-      <div className="u-grid-faint absolute inset-0 opacity-70" aria-hidden />
-      <ScreenFrame slot={slot} className="relative max-w-[340px]" />
-    </div>
-  );
-}
-
-function CheckLine({ children }: { children: ReactNode }) {
-  return (
-    <li className="flex items-start gap-3">
-      <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-pill bg-primary-tint text-primary-strong">
-        <Check className="size-3" strokeWidth={1.75} aria-hidden />
-      </span>
-      <span className="text-[0.95rem] leading-relaxed text-ink-2">
-        {children}
-      </span>
-    </li>
-  );
-}
-
-function FeatureBlock({
+function Carte({
   feature,
-  mediaLeft,
+  index,
+  actif,
+  onActiver,
+  onDesactiver,
 }: {
   feature: Feature;
-  mediaLeft: boolean;
+  index: number;
+  actif: boolean;
+  onActiver: () => void;
+  onDesactiver: () => void;
 }) {
+  const reduced = useReducedMotion();
+  const { eyebrow, title, description, slot } = feature;
+
   return (
-    <div className="grid items-center gap-10 md:grid-cols-2 md:gap-14 lg:gap-20">
-      <Reveal
-        direction={mediaLeft ? "left" : "right"}
-        delay={0.08}
-        className={cn("flex flex-col gap-5", mediaLeft && "md:order-2")}
+    <button
+      type="button"
+      onMouseEnter={onActiver}
+      onMouseLeave={onDesactiver}
+      onFocus={onActiver}
+      onBlur={onDesactiver}
+      onClick={() => (actif ? onDesactiver() : onActiver())}
+      aria-expanded={actif}
+      className={cn(
+        "group relative h-[27rem] w-[16.5rem] shrink-0 snap-start overflow-hidden text-left",
+        "rounded-sheet bg-primary-tint-2 ring-1 ring-line dark:bg-surface-muted",
+        "transition-[box-shadow,transform] duration-300 ease-(--ease-out-soft)",
+        actif && "shadow-float",
+      )}
+    >
+      <div className="u-grid-faint absolute inset-0 opacity-70" aria-hidden />
+
+      {/* La capture — elle glisse doucement vers le haut quand le volet monte,
+          pour qu'on la voie encore entièrement au lieu d'être coupée. */}
+      <motion.div
+        animate={reduced ? undefined : { y: actif ? -26 : 0 }}
+        transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+        className="relative flex justify-center px-6 pt-7"
       >
-        <p className="u-eyebrow text-primary-deep">{feature.eyebrow}</p>
+        <ScreenFrame slot={slot} className="max-w-[176px]" />
+      </motion.div>
 
-        <h3 className="max-w-[19ch] text-h3 font-semibold text-ink">
-          {feature.title}
-        </h3>
-
-        <p className="max-w-[48ch] text-[1.02rem] leading-relaxed text-ink-2">
-          {feature.description}
-        </p>
-
-        <ul className="mt-1 flex flex-col gap-3">
-          {feature.points.map((point) => (
-            <CheckLine key={point}>{point}</CheckLine>
-          ))}
-        </ul>
-      </Reveal>
-
-      <Reveal
-        direction={mediaLeft ? "right" : "left"}
-        className={cn("flex justify-center", mediaLeft && "md:order-1")}
+      {/* Barre au repos : le seul texte visible tant qu'on ne survole pas. */}
+      <div
+        className={cn(
+          "absolute inset-x-0 bottom-0 flex items-center justify-between gap-3 px-5 py-4",
+          "bg-linear-to-t from-page via-page/95 to-transparent pt-10 dark:from-surface-muted dark:via-surface-muted/95",
+          "transition-opacity duration-300 ease-(--ease-out-soft)",
+          actif ? "opacity-0" : "opacity-100",
+        )}
       >
-        <ScreenStage slot={feature.slot} />
-      </Reveal>
-    </div>
+        <span className="u-eyebrow text-primary-deep">{eyebrow}</span>
+        <span className="flex size-6 items-center justify-center rounded-pill bg-primary-tint text-primary-strong">
+          <Plus className="size-3.5" strokeWidth={2.5} aria-hidden />
+        </span>
+      </div>
+
+      {/* Volet explicatif. Toujours dans le DOM — seulement déplacé hors du
+          cadre — donc lu par les lecteurs d'écran quel que soit l'état. */}
+      <div
+        className={cn(
+          "absolute inset-x-0 bottom-0 flex flex-col gap-2 px-5 pb-5 pt-8",
+          "bg-linear-to-t from-surface via-surface/97 to-transparent",
+          "transition-transform duration-[420ms] ease-(--ease-out-soft)",
+          actif ? "translate-y-0" : "translate-y-full",
+        )}
+      >
+        <span className="u-eyebrow text-primary-deep">{eyebrow}</span>
+        <span className="text-[1.02rem] font-semibold leading-snug text-ink">
+          {title}
+        </span>
+        <span className="text-[0.85rem] leading-relaxed text-ink-2">
+          {description}
+        </span>
+        <span className="u-numeric mt-1 text-[0.68rem] text-ink-4">
+          {String(index + 1).padStart(2, "0")} / {String(FEATURES.length).padStart(2, "0")}
+        </span>
+      </div>
+    </button>
   );
 }
 
 export function Features() {
-  return (
-    <Section id="fonctionnalites">
-      <Reveal>
-        <SectionHeading
-          eyebrow="Ce que fait l'application"
-          title="Quatre mécanismes. Vérifiables en dix minutes."
-          lead="Pas des intentions : des comportements de l'application, que vous pouvez constater dès la première semaine."
-        />
-      </Reveal>
+  const [actif, setActif] = useState<number | null>(null);
 
-      <div className="mt-16 flex flex-col gap-20 md:mt-24 md:gap-28 lg:gap-36">
+  return (
+    <Section id="fonctionnalites" containerClassName="max-w-none px-0">
+      <div className="mx-auto w-full max-w-(--container-page) px-4 sm:px-6">
+        <Reveal>
+          <SectionHeading
+            eyebrow="Ce que fait l'application"
+            title="Quatre mécanismes. Vérifiables en dix minutes."
+            lead="Passez sur une capture pour savoir ce qu'elle fait."
+          />
+        </Reveal>
+      </div>
+
+      <div
+        className={cn(
+          "mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth",
+          "px-4 pb-4 sm:px-6",
+          "lg:justify-center lg:overflow-visible",
+          "[scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+        )}
+      >
         {FEATURES.map((feature, index) => (
-          <FeatureBlock
+          <Carte
             key={feature.eyebrow}
             feature={feature}
-            mediaLeft={index % 2 === 0}
+            index={index}
+            actif={actif === index}
+            onActiver={() => setActif(index)}
+            onDesactiver={() => setActif((v) => (v === index ? null : v))}
           />
         ))}
       </div>

@@ -139,7 +139,7 @@ export function Testimonials() {
   const liste = publiables ? TEMOIGNAGES : APERCU;
 
   return (
-    <Section id="avis" tone="page">
+    <Section id="avis" tone="surface">
       {apercu ? (
         <div className="mb-10 flex flex-wrap items-center gap-x-4 gap-y-2 rounded-card border-2 border-dashed border-warning/50 bg-warning-tint/50 px-5 py-4">
           <span className="u-eyebrow rounded-pill bg-warning px-2.5 py-1 text-[#3a2a10]">
