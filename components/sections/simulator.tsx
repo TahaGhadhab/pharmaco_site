@@ -18,6 +18,7 @@ import {
   STATUT_LIBELLE,
   calculer,
   formaterETP,
+  formaterPartRevenu,
   formaterValeur,
   type Champ,
   type Entrees,
@@ -143,9 +144,10 @@ export function Simulator() {
   const [entrees, setEntrees] = useState<Entrees>(DEFAUTS);
   const [detailOuvert, setDetailOuvert] = useState(false);
 
-  const { total, lignes, etp } = calculer(entrees);
+  const { total, lignes, etp, partRevenu } = calculer(entrees);
   const montant = useMontantAnime(total, reduit);
   const equivalent = formaterETP(etp);
+  const partRevenuTexte = formaterPartRevenu(partRevenu);
   const plafond = Math.max(...lignes.map((ligne) => ligne.montant), 1);
 
   const majEntree = (cle: keyof Entrees, valeur: number) =>
@@ -161,7 +163,7 @@ export function Simulator() {
               Vos quatre chiffres. Le montant qu&rsquo;ils dessinent.
             </>
           }
-          lead="Tout le reste vient de barèmes publics. Chaque ligne porte sa source."
+          lead="Deux lignes sur trois viennent de sources publiques. La troisième, c'est vous qui la réglez. Rien dans ce total ne sort de chez nous."
         />
       </Reveal>
 
@@ -197,7 +199,8 @@ export function Simulator() {
               <p className="u-eyebrow mt-3 text-ink-4">Par an</p>
               <p role="status" className="sr-only">
                 {euros(total)} par an, soit l&rsquo;équivalent de{" "}
-                {equivalent.phrase} à temps plein.
+                {equivalent.phrase} à temps plein, ou {partRevenuTexte} du revenu
+                annuel moyen d&rsquo;un titulaire.
               </p>
 
               <p className="mt-5 text-[1.02rem] leading-relaxed text-ink-2">
@@ -206,6 +209,14 @@ export function Simulator() {
                   {equivalent.valeur}
                 </span>{" "}
                 {equivalent.mot} à temps plein.
+              </p>
+
+              <p className="mt-2 text-[0.92rem] leading-relaxed text-ink-3">
+                Ou{" "}
+                <span className="u-numeric font-medium text-ink-2">
+                  {partRevenuTexte}
+                </span>{" "}
+                du revenu annuel moyen d&rsquo;un titulaire.
               </p>
 
               {/* Détail repliable — un pharmacien vérifie (§4.4) */}
@@ -217,7 +228,7 @@ export function Simulator() {
                   aria-controls="simulateur-detail"
                   className="group flex w-full items-center justify-between gap-3 rounded-field text-left text-[0.9rem] font-medium text-ink-2 transition-colors duration-200 ease-(--ease-out-soft) hover:text-ink"
                 >
-                  <span>Détail des quatre postes</span>
+                  <span>Détail des trois postes</span>
                   <ChevronDown
                     strokeWidth={1.75}
                     className={cn(

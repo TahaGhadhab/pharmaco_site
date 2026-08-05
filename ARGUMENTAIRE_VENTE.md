@@ -312,14 +312,28 @@ Cette phrase n'affaiblit pas le simulateur. **Elle en fait l'argument.**
 | 1 | Chiffre d'affaires HT annuel | curseur € | 2 263 000 | 800 K€ – 6 M€ |
 | 2 | Nombre de personnes dans l'équipe | curseur | 6 | 2 – 20 |
 | 3 | Heures par semaine passées à gérer les ruptures | curseur h | 8 | 2 – 16 |
-| 4 | Locations de matériel en cours | curseur | 6 | 0 – 40 |
+| 4 | Minutes par personne et par jour à redemander, répéter, retrouver | curseur min | 10 | 5 – 20 |
 
 Chaque curseur porte une note discrète en Geist Mono :
 - champ 1 → `MOYENNE FRANÇAISE 2025 : 2 263 K€`
 - champ 3 → `USPO ET GPUE MESURENT 12 H`
-- champ 4 → `BASE LPPR LIT MÉDICALISÉ : 12,60 €/JOUR`
+- champ 4 → `AUCUNE SOURCE PUBLIQUE — CE CHIFFRE EST LE VÔTRE`
+
+Le champ 4 est le seul poste non sourcé du calcul, et sa note le dit. C'est la
+stratégie du §0 appliquée jusqu'au bout : avouer le trou vaut mieux que le combler.
 
 ### 4.3 La formule
+
+> ⚠️ **Révisé le 5 août 2026 — la version ci-dessous est celle qui est en ligne.**
+> Le poste « termes de location » a été **retiré du total**. Son barème (12,60 €/jour)
+> ne couvrait qu'un lit médicalisé, et le nombre de termes oubliés était *notre*
+> hypothèse, pas celle du visiteur. Les 10 minutes de coordination, elles, sont
+> devenues un curseur — ce que le §3.5 exigeait déjà.
+> **Règle de composition, désormais :** toute ligne du total est soit un barème
+> public citable, soit une valeur réglée par le visiteur. Rien entre les deux.
+> Ne pas réintroduire le poste location sans mesure terrain.
+> L'argument commercial de la location (§3.6, §5.1) reste valable **en section
+> fonctionnalité** — il n'a simplement plus sa place dans un total chiffré.
 
 ```
 coutHoraire = 20            // €/h chargé, mix préparateur / adjoint / titulaire
@@ -328,13 +342,14 @@ jours       = 250
 
 ruptures    = heuresRuptures × semaines × coutHoraire
 margePerdue = CA × 0,0052 × 0,29
-coordination= effectif × (10/60) × jours × coutHoraire
-locations   = min(locations, 4) × 378
+coordination= effectif × (minutesCoordination/60) × jours × coutHoraire
 
-TOTAL = ruptures + margePerdue + coordination + locations
+TOTAL = ruptures + margePerdue + coordination
 ```
 
-Avec les valeurs par défaut : 7 360 + 3 413 + 5 167 + 1 512 = **≈ 17 450 € / an**.
+Avec les valeurs par défaut (8 h, 2 263 K€, 6 personnes, 10 min) :
+7 360 + 3 413 + 5 000 = **≈ 15 773 € / an**, soit **0,5 préparateur** ou **24 %** du
+revenu annuel du titulaire.
 
 ### 4.4 L'affichage du résultat
 
@@ -342,16 +357,16 @@ Avec les valeurs par défaut : 7 360 + 3 413 + 5 167 + 1 512 = **≈ 17 450 € 
 ┌──────────────────────────────────────────────────┐
 │  CE QUE LE DÉSORDRE COÛTE À VOTRE OFFICINE       │  ← Geist Mono, vert #15894C
 │                                                   │
-│         17 450 €                                  │  ← chiffre en Geist Mono, très grand
+│         15 773 €                                  │  ← chiffre en Geist Mono, très grand
 │         par an                                    │
 │                                                   │
-│  Soit l'équivalent de 0,6 préparateur             │  ← la traduction en ETP, essentielle
+│  Soit l'équivalent de 0,5 préparateur             │  ← la traduction en ETP, essentielle
 │  à temps plein.                                   │
+│  Ou 24 % du revenu annuel d'un titulaire.         │  ← §3.9 n°2, registre personnel
 │                                                   │
 │  ▸ Ruptures, temps d'équipe          7 360 €     │  ← détail dépliable, chaque ligne
 │  ▸ Marge perdue, ventes non servies  3 413 €     │     avec sa source au survol
-│  ▸ Coordination non tracée           5 167 €     │
-│  ▸ Termes de location non encaissés  1 512 €     │
+│  ▸ Coordination non tracée           5 000 €     │  ← « VOTRE ESTIMATION », pas « HYPOTHÈSE »
 │                                                   │
 │  Ce calcul utilise vos chiffres et des sources   │
 │  publiques. Il estime ce que le désordre vous    │

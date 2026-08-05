@@ -7,6 +7,13 @@
  * la source est affichée à l'écran. Ne jamais présenter ce résultat comme un gain,
  * une économie ou un retour sur investissement.
  *
+ * ⚠️ Règle de composition du total, plus stricte que le §4.3 d'origine :
+ * **toute ligne du total est soit un barème public citable, soit une valeur que
+ * le visiteur règle lui-même.** Rien entre les deux. C'est pourquoi le poste
+ * « termes de location » a été retiré : son barème (12,60 €/jour) ne portait que
+ * sur un lit médicalisé, et le nombre de termes oubliés était notre hypothèse,
+ * pas celle du visiteur. Ne pas le réintroduire sans mesure terrain.
+ *
  * Logique pure, sans JSX : tout est testable isolément.
  */
 
@@ -40,29 +47,12 @@ export const PART_MARGE = 0.29;
 /**
  * Part du CA HT non servie pour cause de rupture : 0,52 %.
  * Source : étude Offisanté × Le Moniteur des pharmacies, 500 premières
- * spécialités en tension sur 12 mois glissants — 8 314 €/an de CA perdu en
- * moyenne, médiane 7 940 € (§3.4).
+ * spécialités en tension sur 12 mois glissants (§3.4). Le taux est la **moyenne**
+ * de l'étude — 8 314 €/an de CA perdu sur une officine à 1,6 M€ — soit 0,52 %.
+ * La médiane (7 940 €) donnerait 0,50 % : l'écart est négligeable, mais ne pas
+ * attribuer le 0,52 % à la médiane, c'est faux.
  */
 export const TAUX_CA_PERDU = 0.0052;
-
-/**
- * Terme mensuel d'une location de lit médicalisé, en euros.
- * Base LPPR : 12,60 €/jour, soit ≈ 378 € par mois de location (§3.6).
- */
-export const TERME_LOCATION = 378;
-
-/**
- * Nombre de termes mensuels retenus dans l'année, au maximum.
- * Hypothèse prudente : un terme oublié par trimestre, jamais davantage (§3.6).
- */
-export const PLAFOND_TERMES = 4;
-
-/**
- * Minutes de coordination non tracée, par personne et par jour.
- * Hypothèse assumée, sans source publique : redemander, répéter une consigne,
- * chercher qui a fait quoi, reconstituer le planning réalisé (§3.5).
- */
-export const MINUTES_COORDINATION = 10;
 
 /**
  * Coût annuel chargé d'un préparateur en pharmacie, coef. 250 : ≈ 30 000 €.
@@ -70,6 +60,13 @@ export const MINUTES_COORDINATION = 10;
  * c'est la mise en perspective la plus parlante pour un titulaire.
  */
 export const COUT_ETP_PREPARATEUR = 30_000;
+
+/**
+ * Revenu brut annuel moyen d'un titulaire en 2024, hors dividendes : 64 461 €.
+ * Source : Le Moniteur des pharmacies / INSEE (§3.1). Seconde mise en
+ * perspective du §3.9 — registre personnel, là où l'ETP parle effectif.
+ */
+export const REVENU_TITULAIRE = 64_461;
 
 /** La clause du §4.1, à afficher **mot pour mot** sous le résultat. */
 export const CLAUSE_LEGALE =
@@ -86,14 +83,14 @@ export type Entrees = {
   effectif: number;
   /** Heures par semaine passées à gérer les ruptures, pour toute l'équipe. */
   heuresRuptures: number;
-  /** Locations de matériel en cours. */
-  locations: number;
+  /** Minutes de coordination non tracée, par personne et par jour. */
+  minutesCoordination: number;
 };
 
 export type CleEntree = keyof Entrees;
 
 /** Unité d'affichage de la valeur courante d'un curseur. */
-export type Unite = "euros" | "personnes" | "heures" | "locations";
+export type Unite = "euros" | "personnes" | "heures" | "minutes";
 
 export type Champ = {
   cle: CleEntree;
@@ -111,10 +108,16 @@ export const DEFAUTS: Entrees = {
   caHt: 2_263_000,
   effectif: 6,
   heuresRuptures: 8,
-  locations: 6,
+  minutesCoordination: 10,
 };
 
-/** Les quatre curseurs, dans l'ordre d'affichage (§4.2). */
+/**
+ * Les quatre curseurs, dans l'ordre d'affichage (§4.2).
+ *
+ * Le quatrième porte la seule valeur non sourcée du calcul. Sa note ne cite donc
+ * aucune source : elle dit qu'il n'y en a pas. C'est la stratégie du §0 — dans un
+ * secteur saturé de plaquettes, avouer le trou vaut mieux que le combler.
+ */
 export const CHAMPS: readonly Champ[] = [
   {
     cle: "caHt",
@@ -144,29 +147,31 @@ export const CHAMPS: readonly Champ[] = [
     note: "USPO ET GPUE MESURENT 12 H",
   },
   {
-    cle: "locations",
-    libelle: "Locations de matériel en cours",
-    min: 0,
-    max: 40,
-    pas: 1,
-    unite: "locations",
-    note: "BASE LPPR LIT MÉDICALISÉ : 12,60 €/JOUR",
+    cle: "minutesCoordination",
+    libelle: "Minutes par personne et par jour à redemander, répéter, retrouver",
+    min: 5,
+    max: 20,
+    pas: 5,
+    unite: "minutes",
+    note: "AUCUNE SOURCE PUBLIQUE — CE CHIFFRE EST LE VÔTRE",
   },
 ];
 
 /* ── Sorties ───────────────────────────────────────────────────────────── */
 
-export type CleLigne = "ruptures" | "margePerdue" | "coordination" | "locations";
+export type CleLigne = "ruptures" | "margePerdue" | "coordination";
 
 /**
- * Statut de chaque poste, repris tel quel du §3 :
- * `sourcee` = barème public citable · `hypothese` = raisonnement assumé, non mesuré.
+ * Statut de chaque poste :
+ * `sourcee` = barème public citable · `saisie` = valeur réglée par le visiteur.
+ * Il n'existe plus de troisième statut — voir la règle de composition en tête
+ * de fichier.
  */
-export type Statut = "sourcee" | "hypothese";
+export type Statut = "sourcee" | "saisie";
 
 export const STATUT_LIBELLE: Record<Statut, string> = {
   sourcee: "SOURCE PUBLIQUE",
-  hypothese: "HYPOTHÈSE ASSUMÉE",
+  saisie: "VOTRE ESTIMATION",
 };
 
 export type Ligne = {
@@ -186,6 +191,8 @@ export type Resultat = {
   lignes: Ligne[];
   /** Équivalent temps plein de préparateur correspondant au total. */
   etp: number;
+  /** Part du revenu brut annuel d'un titulaire, entre 0 et 1. */
+  partRevenu: number;
 };
 
 /* ── Calcul ────────────────────────────────────────────────────────────── */
@@ -212,24 +219,28 @@ export function equivalentETP(total: number) {
   return total / COUT_ETP_PREPARATEUR;
 }
 
+/** Traduit un coût annuel en part du revenu brut du titulaire (§3.9). */
+export function partRevenuTitulaire(total: number) {
+  return total / REVENU_TITULAIRE;
+}
+
 /**
- * Le calcul du §4.3, ligne par ligne, chaque ligne portant sa source.
+ * Le calcul, ligne par ligne, chaque ligne portant sa source.
  *
  * ruptures     = heuresRuptures × 46 semaines × 20 €/h
  * margePerdue  = CA HT × 0,52 % × 29 %
- * coordination = effectif × 10 min × 250 jours × 20 €/h
- * locations    = min(locations, 4) × 378 €
+ * coordination = effectif × minutes/60 × 250 jours × 20 €/h
  */
 export function calculer(entrees: Entrees): Resultat {
-  const { caHt, effectif, heuresRuptures, locations } = bornerEntrees(entrees);
+  const { caHt, effectif, heuresRuptures, minutesCoordination } =
+    bornerEntrees(entrees);
 
   const ruptures = heuresRuptures * SEMAINES * COUT_HORAIRE;
   const margePerdue = caHt * TAUX_CA_PERDU * PART_MARGE;
   const coordination =
-    effectif * (MINUTES_COORDINATION / 60) * JOURS * COUT_HORAIRE;
-  const termes = Math.min(locations, PLAFOND_TERMES) * TERME_LOCATION;
+    effectif * (minutesCoordination / 60) * JOURS * COUT_HORAIRE;
 
-  const total = ruptures + margePerdue + coordination + termes;
+  const total = ruptures + margePerdue + coordination;
   const diviseur = total > 0 ? total : 1;
 
   const lignes: Ligne[] = [
@@ -249,33 +260,28 @@ export function calculer(entrees: Entrees): Resultat {
       montant: margePerdue,
       statut: "sourcee",
       source:
-        "Étude Offisanté × Le Moniteur des pharmacies : 0,52 % du CA HT non servi, " +
-        "appliqué à 29 % de marge brute moyenne.",
+        "Étude Offisanté × Le Moniteur des pharmacies : 0,52 % du CA HT non servi en moyenne, " +
+        "appliqué à 29 % de marge brute.",
       part: margePerdue / diviseur,
     },
     {
       cle: "coordination",
       libelle: "Coordination non tracée",
       montant: coordination,
-      statut: "hypothese",
+      statut: "saisie",
       source:
-        "Aucune source publique. Hypothèse assumée : 10 min par personne et par jour, " +
-        "sur 250 jours travaillés.",
+        "Aucune source publique n'existe sur ce poste, et nous n'en avons pas inventé : " +
+        "c'est vous qui réglez les minutes, sur 250 jours travaillés.",
       part: coordination / diviseur,
-    },
-    {
-      cle: "locations",
-      libelle: "Termes de location non encaissés",
-      montant: termes,
-      statut: "hypothese",
-      source:
-        "Base LPPR d'un lit médicalisé : 12,60 €/jour, soit 378 € le terme mensuel. " +
-        "Hypothèse : un terme oublié par trimestre, quatre au plus.",
-      part: termes / diviseur,
     },
   ];
 
-  return { total, lignes, etp: equivalentETP(total) };
+  return {
+    total,
+    lignes,
+    etp: equivalentETP(total),
+    partRevenu: partRevenuTitulaire(total),
+  };
 }
 
 /* ── Formatage ─────────────────────────────────────────────────────────── */
@@ -289,13 +295,13 @@ export function formaterValeur(unite: Unite, valeur: number): string {
       return `${nombre(valeur)} pers.`;
     case "heures":
       return `${nombre(valeur)} h/sem.`;
-    case "locations":
-      return nombre(valeur);
+    case "minutes":
+      return `${nombre(valeur)} min`;
   }
 }
 
 /**
- * « Soit l'équivalent de 0,6 préparateur à temps plein. » (§3.9)
+ * « Soit l'équivalent de 0,5 préparateur à temps plein. » (§3.9)
  * Renvoie les morceaux séparément : seuls les chiffres portent `.u-numeric`.
  */
 export function formaterETP(etp: number): {
@@ -307,4 +313,9 @@ export function formaterETP(etp: number): {
   const valeur = nombre(arrondi, 1);
   const mot = arrondi >= 2 ? "préparateurs" : "préparateur";
   return { valeur, mot, phrase: `${valeur} ${mot}` };
+}
+
+/** « 24 % du revenu annuel du titulaire. » (§3.9, mise en perspective n°2) */
+export function formaterPartRevenu(part: number): string {
+  return `${nombre(Math.round(part * 100))} %`;
 }
