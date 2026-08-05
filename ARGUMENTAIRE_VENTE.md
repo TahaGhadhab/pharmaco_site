@@ -297,13 +297,21 @@ calculé à partir de :
 - **les chiffres que le visiteur saisit lui-même**,
 - **des barèmes publics** dont la source est affichée à l'écran.
 
-**La ligne à écrire sous le résultat, en toutes lettres, non négociable :**
+**La ligne à écrire sous le résultat, en toutes lettres :**
 
 > *Ce calcul utilise vos chiffres et des sources publiques. Il estime ce que le désordre vous
-> coûte aujourd'hui — pas ce que PharmacoWork vous ferait gagner. Nous n'avons pas encore de
-> mesure terrain, et nous n'en inventerons pas.*
+> coûte aujourd'hui — pas ce que PharmacoWork vous ferait gagner.*
 
 Cette phrase n'affaiblit pas le simulateur. **Elle en fait l'argument.**
+
+> ⚠️ **Révisé le 5 août 2026 — décision du client.** La clause comportait une troisième
+> phrase, *« Nous n'avons pas encore de mesure terrain, et nous n'en inventerons pas. »*,
+> qui a été retirée de la page. Ne pas la remettre.
+> **Ce qui reste ne se raccourcit pas :** c'est la partie qui distingue le coût du problème
+> d'un gain produit, et c'est elle seule qui rend le montant publiable au regard du §15.
+> La posture « nous n'inventons pas de chiffre » n'a pas disparu du site pour autant — elle
+> est désormais portée par le badge `VOTRE ESTIMATION` et par la note du quatrième curseur
+> (`AUCUNE SOURCE PUBLIQUE — CE CHIFFRE EST LE VÔTRE`), voir §4.2.
 
 ### 4.2 Les champs
 
@@ -371,8 +379,7 @@ revenu annuel du titulaire.
 │  Ce calcul utilise vos chiffres et des sources   │
 │  publiques. Il estime ce que le désordre vous    │
 │  coûte aujourd'hui — pas ce que PharmacoWork     │
-│  vous ferait gagner. Nous n'avons pas encore de  │
-│  mesure terrain, et nous n'en inventerons pas.   │
+│  vous ferait gagner.                             │
 │                                                   │
 │         [ Demander l'accès ]                      │
 └──────────────────────────────────────────────────┘

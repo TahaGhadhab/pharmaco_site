@@ -68,11 +68,18 @@ export const COUT_ETP_PREPARATEUR = 30_000;
  */
 export const REVENU_TITULAIRE = 64_461;
 
-/** La clause du §4.1, à afficher **mot pour mot** sous le résultat. */
+/**
+ * La clause du §4.1, à afficher sous le résultat.
+ *
+ * La troisième phrase (« Nous n'avons pas encore de mesure terrain, et nous
+ * n'en inventerons pas. ») a été retirée le 5 août 2026, sur décision du client.
+ * Ce qui reste est la partie qui protège : elle dit que le montant est le coût
+ * du problème et non un gain PharmacoWork — c'est elle qui rend le simulateur
+ * publiable au regard du §15. **Ne pas raccourcir davantage.**
+ */
 export const CLAUSE_LEGALE =
   "Ce calcul utilise vos chiffres et des sources publiques. Il estime ce que le " +
-  "désordre vous coûte aujourd'hui — pas ce que PharmacoWork vous ferait gagner. " +
-  "Nous n'avons pas encore de mesure terrain, et nous n'en inventerons pas.";
+  "désordre vous coûte aujourd'hui — pas ce que PharmacoWork vous ferait gagner.";
 
 /* ── Entrées ───────────────────────────────────────────────────────────── */
 
