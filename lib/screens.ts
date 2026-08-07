@@ -35,9 +35,9 @@ export const screens = {
     id: "accueil",
     src: "/screens/accueil.webp",
     variant: "phone",
-    alt: "Écran d'accueil : session de pointage en cours, indicateurs de l'officine et carte de l'équipe en poste.",
+    alt: "Écran d'accueil : bouton de démarrage de session, compteurs de tâches, de ruptures ouvertes, de locations à rendre et d'ordonnances à servir, puis la carte de l'équipe.",
     brief:
-      "Accueil — session de pointage démarrée, les KPI temps réel, la carte Équipe.",
+      "Accueil — le bouton « Démarrer la session », les quatre compteurs, la carte Équipe.",
   },
   scan: {
     id: "scan",
