@@ -1,0 +1,97 @@
+import { SITE_URL, site } from "@/lib/site";
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Données structurées schema.org.
+
+   Ce que lisent Google (rich results, AI Overviews) et les robots des LLM
+   pour savoir *ce qu'est* PharmacoWork sans avoir à le déduire du texte.
+
+   ⛔ §15 — rien ici ne doit dépasser ce qui est vérifiable :
+      · pas d'`aggregateRating` ni de `review` : aucun avis réel n'existe,
+        et en fabriquer un est une pratique commerciale trompeuse (L121-2).
+      · pas d'`offers` avec un `price` : aucun montant n'a été arrêté.
+      · pas de mention de certification, d'hébergement français, ni de
+        conformité déclarée.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/** Identifiants stables : ils relient les entités entre elles dans le graphe. */
+const ID_ORGANISATION = `${SITE_URL}/#organisation`;
+const ID_SITE = `${SITE_URL}/#site`;
+const ID_LOGICIEL = `${SITE_URL}/#logiciel`;
+
+const DESCRIPTION =
+  "PharmacoWork est l'espace de travail interne d'une officine de pharmacie française. " +
+  "Il prend en charge ce que le logiciel de gestion d'officine ne fait pas : tâches, " +
+  "ordonnances à préparer, commandes, ruptures, locations de matériel, qualité, agenda " +
+  "et planning d'équipe. Il complète le LGO, il ne le remplace pas.";
+
+/**
+ * Le graphe complet, en une seule balise.
+ *
+ * `@graph` plutôt que trois scripts séparés : les `@id` se référencent
+ * mutuellement, et Google traite l'ensemble comme une seule description
+ * cohérente au lieu de trois fragments à recouper.
+ */
+export const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": ID_ORGANISATION,
+      name: site.name,
+      url: SITE_URL,
+      logo: {
+        "@type": "ImageObject",
+        url: `${SITE_URL}/icon.svg`,
+        caption: "Logo PharmacoWork",
+      },
+      description: DESCRIPTION,
+      email: "contact@pharmacowork.fr",
+      areaServed: { "@type": "Country", name: "France" },
+      knowsLanguage: "fr-FR",
+    },
+    {
+      "@type": "WebSite",
+      "@id": ID_SITE,
+      url: SITE_URL,
+      name: site.name,
+      description: DESCRIPTION,
+      inLanguage: "fr-FR",
+      publisher: { "@id": ID_ORGANISATION },
+      about: { "@id": ID_LOGICIEL },
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": ID_LOGICIEL,
+      name: site.name,
+      alternateName: "Pharmaco Work",
+      url: SITE_URL,
+      applicationCategory: "BusinessApplication",
+      applicationSubCategory: "Logiciel d'organisation pour officine de pharmacie",
+      operatingSystem: "Web (navigateur), iOS, Android",
+      browserRequirements: "Navigateur récent. Aucune installation requise.",
+      inLanguage: "fr-FR",
+      description: DESCRIPTION,
+      publisher: { "@id": ID_ORGANISATION },
+      audience: {
+        "@type": "BusinessAudience",
+        audienceType:
+          "Officine de pharmacie : titulaire, adjoint, préparateur, apprenti",
+        geographicArea: { "@type": "Country", name: "France" },
+      },
+      /* Les 15 modules réels — pas « Formation », interdit de mise en avant. */
+      featureList: [
+        "Tâches assignées et datées",
+        "Ordonnances à préparer, lues par photo",
+        "Commandes fournisseurs et livraisons attendues",
+        "Ruptures déclarées, levées au scan, croisées avec le fichier ANSM",
+        "Locations de matériel : échéancier, paiements, solde restant dû",
+        "Qualité : contrôles, non-conformités, incidents",
+        "Agenda de tout ce qui porte une date",
+        "Planning d'équipe alimenté par le pointage",
+        "Scan des codes-barres CIP13 par la caméra du téléphone",
+        "Grille de droits réglée par le titulaire, sept rôles",
+      ],
+    },
+  ],
+} as const;

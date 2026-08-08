@@ -4,6 +4,7 @@ import { useId, useState } from "react";
 import { Minus, Plus } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
+import { JsonLd } from "@/components/ui/json-ld";
 import { Section, SectionHeading } from "@/components/ui/primitives";
 import { Reveal } from "@/components/ui/reveal";
 import { site } from "@/lib/site";
@@ -57,18 +58,15 @@ const QUESTIONS: Question[] = [
   },
 ];
 
-/** Neutralise `<` pour ne jamais fermer la balise script depuis les données. */
-function jsonLd() {
-  return JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: QUESTIONS.map(({ q, r }) => ({
-      "@type": "Question",
-      name: q,
-      acceptedAnswer: { "@type": "Answer", text: r },
-    })),
-  }).replace(/</g, "\\u003c");
-}
+const FAQ_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: QUESTIONS.map(({ q, r }) => ({
+    "@type": "Question",
+    name: q,
+    acceptedAnswer: { "@type": "Answer", text: r },
+  })),
+};
 
 function Item({
   question,
@@ -136,10 +134,7 @@ export function Faq() {
 
   return (
     <Section id="faq">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: jsonLd() }}
-      />
+      <JsonLd data={FAQ_JSON_LD} />
 
       <div className="grid gap-10 md:grid-cols-12 md:gap-12">
         <Reveal className="md:col-span-5">

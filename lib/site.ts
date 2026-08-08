@@ -5,7 +5,15 @@
 
 const APP =
   process.env.NEXT_PUBLIC_APP_URL ??
-  "https://pharmaco-web-production.up.railway.app";
+  "https://app.pharmacowork.fr";
+
+/**
+ * Domaine canonique de la vitrine — distinct de celui de l'application.
+ * Sert de base à `metadataBase`, au sitemap, au robots.txt et au JSON-LD :
+ * une seule origine déclarée partout, sinon Google indexe deux fois le
+ * même contenu et dilue le signal.
+ */
+export const SITE_URL = "https://pharmacowork.fr";
 
 export const site = {
   name: "PharmacoWork",

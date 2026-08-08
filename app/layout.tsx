@@ -1,5 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { JsonLd } from "@/components/ui/json-ld";
+import { structuredData } from "@/lib/structured-data";
+import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -15,7 +18,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://pharmacowork.fr"),
+  metadataBase: new URL(SITE_URL),
+  /**
+   * Le nom de marque en tête du titre : c'est lui qu'on cherche quand on tape
+   * « pharmacowork », et Google pondère fortement la position du terme.
+   */
   title: {
     default: "PharmacoWork — L'espace de travail de votre officine",
     template: "%s · PharmacoWork",
@@ -23,7 +30,11 @@ export const metadata: Metadata = {
   description:
     "Tout ce que votre officine fait hors du LGO, dans une seule application. Tâches, ordonnances à préparer, commandes, ruptures, locations, qualité, planning et messagerie d'équipe.",
   applicationName: "PharmacoWork",
+  authors: [{ name: "PharmacoWork", url: SITE_URL }],
+  creator: "PharmacoWork",
+  publisher: "PharmacoWork",
   keywords: [
+    "PharmacoWork",
     "officine",
     "pharmacie",
     "logiciel officine",
@@ -33,15 +44,56 @@ export const metadata: Metadata = {
     "planning officine",
     "traçabilité qualité officine",
   ],
+  /**
+   * Canonical explicite : la page est servie sur plusieurs origines pendant
+   * la vie du projet (domaine Railway, prévisualisations). Sans cette balise,
+   * Google indexe la première qu'il trouve et la marque perd son domaine.
+   */
+  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     locale: "fr_FR",
+    url: SITE_URL,
     siteName: "PharmacoWork",
     title: "PharmacoWork — Rien ne se perd.",
     description:
       "L'espace de travail interne de votre officine. Tout ce que votre LGO ne fait pas, sur le téléphone que votre équipe a déjà.",
   },
-  robots: { index: true, follow: true },
+  twitter: {
+    card: "summary_large_image",
+    title: "PharmacoWork — Rien ne se perd.",
+    description:
+      "L'espace de travail interne de votre officine. Tout ce que votre LGO ne fait pas, sur le téléphone que votre équipe a déjà.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-snippet": -1,
+      "max-image-preview": "large",
+      "max-video-preview": -1,
+    },
+  },
+  category: "Logiciel professionnel de santé",
+  /**
+   * Search Console — jeton de la méthode « balise Meta ».
+   *
+   * Ce n'est pas un secret : Google le publie dans le HTML, c'est tout son
+   * objet. Il vit donc dans le code, pas dans une variable d'environnement
+   * qu'on oublierait de reporter d'un déploiement à l'autre. L'override par
+   * `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` reste possible si la propriété
+   * change de main.
+   *
+   * ⚠️ Ne jamais retirer cette balise : Google revalide périodiquement, et
+   * sa disparition fait perdre le statut de propriétaire.
+   */
+  verification: {
+    google:
+      process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ??
+      "alC9loe2GAWoDHxxaFIcYPWcPHgs8DO2i4XPvddpk6c",
+  },
 };
 
 export const viewport: Viewport = {
@@ -69,6 +121,7 @@ export default function RootLayout({
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <JsonLd data={structuredData} />
       </head>
       <body className="flex min-h-full flex-col">
         <a
