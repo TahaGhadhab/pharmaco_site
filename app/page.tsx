@@ -35,9 +35,9 @@ export default function Home() {
         <PostitWall />
         <Simulator />
         <Founders />
-        <Features />
-        <Modules />
         <Gallery />
+        <Modules />
+        <Features />
         <Testimonials />
         <FinalCta />
         <Faq />

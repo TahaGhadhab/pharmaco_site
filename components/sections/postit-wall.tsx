@@ -80,14 +80,14 @@ const POSTITS: Postit[] = [
     },
   },
   {
-    recto: "Lecteur glycémie\nprêté à… quelqu’un",
+    recto: "Préparer l’ordonnance\nde M. Dupont",
     tilt: "-2.5deg",
     verso: {
-      module: "Locations",
-      titre: "Lecteur glycémie — échéancier mensuel",
+      module: "Tâches",
+      titre: "Ordonnance de M. Dupont — à préparer",
       acteur: "WY",
-      detail: "Fin de période le 14",
-      statut: "Soldée",
+      detail: "Échéance aujourd’hui 14 h",
+      statut: "Assignée",
     },
   },
   {

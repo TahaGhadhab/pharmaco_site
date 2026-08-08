@@ -62,7 +62,7 @@ const TEMOIGNAGES: Temoignage[] = [
     citation:
       "Je n’ai plus besoin d’être derrière chaque collaborateur. L’organisation fait une partie du travail.",
     fort: "L’organisation fait une partie du travail",
-    personne: "Mari Attali",
+    personne: "Marie Attali",
     fonction: "Titulaire · officine de centre-ville · Paris",
     initiales: "MA",
   },

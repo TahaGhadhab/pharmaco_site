@@ -101,7 +101,7 @@ export const screens = {
   },
   chat: {
     id: "chat",
-    src: "/screens/chat.webp",
+    src: "/screens/chat2.webp",
     variant: "phone",
     alt: "Messagerie interne de l'officine : canaux thématiques et conversations directes.",
     brief: "Liste des canaux + une conversation ouverte. Aucun contenu patient à l'écran.",
