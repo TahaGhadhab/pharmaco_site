@@ -22,5 +22,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 1,
     },
+    /* Les pages légales sont indexables — elles participent à la confiance
+       accordée au domaine — mais ne concurrencent pas l'accueil. */
+    {
+      url: `${SITE_URL}/mentions-legales`,
+      lastModified: DERNIERE_MODIFICATION,
+      changeFrequency: "yearly",
+      priority: 0.2,
+    },
+    {
+      url: `${SITE_URL}/confidentialite`,
+      lastModified: DERNIERE_MODIFICATION,
+      changeFrequency: "yearly",
+      priority: 0.2,
+    },
   ];
 }

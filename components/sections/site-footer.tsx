@@ -11,8 +11,8 @@ import { site } from "@/lib/site";
  */
 
 const LIENS_LEGAUX = [
-  { label: "Mentions légales", href: "#" },
-  { label: "Confidentialité", href: "#" },
+  { label: "Mentions légales", href: "/mentions-legales" },
+  { label: "Confidentialité", href: "/confidentialite" },
   { label: "Contact", href: site.urls.contact },
 ];
 
