@@ -5,7 +5,7 @@
 > l'organisation de l'équipe et le suivi de ce qui reste à faire. Il complète le LGO,
 > il ne le remplace pas.
 
-Site : https://pharmacowork.fr
+Site : https://www.pharmacowork.fr
 Application : https://app.pharmacowork.fr
 Contact : contact@pharmacowork.fr
 Langue : français · Marché : France

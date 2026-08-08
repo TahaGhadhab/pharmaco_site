@@ -12,8 +12,15 @@ const APP =
  * Sert de base à `metadataBase`, au sitemap, au robots.txt et au JSON-LD :
  * une seule origine déclarée partout, sinon Google indexe deux fois le
  * même contenu et dilue le signal.
+ *
+ * ⚠️ Avec le `www`, et ce n'est pas un détail : Vercel sert la vitrine sur
+ * `www.pharmacowork.fr` et redirige l'apex en 308 vers lui. Déclarer l'apex
+ * ici ferait pointer le canonical et le sitemap vers une URL qui redirige —
+ * Search Console la classe alors en « Page avec redirection » et n'indexe
+ * pas ce qu'on lui a soumis. Si le domaine principal change côté Vercel,
+ * c'est cette constante qu'il faut suivre.
  */
-export const SITE_URL = "https://pharmacowork.fr";
+export const SITE_URL = "https://www.pharmacowork.fr";
 
 export const site = {
   name: "PharmacoWork",
