@@ -169,7 +169,7 @@ function PlanAnime({ plan, periode }: { plan: Plan; periode: PeriodeId }) {
 
 function JaugeEquipe({ plan }: { plan: Plan }) {
   return (
-    <div className="mt-5 flex flex-wrap gap-1" aria-hidden>
+    <div className="mt-4 flex flex-wrap gap-1 sm:mt-5" aria-hidden>
       {Array.from({ length: EQUIPE_MAX }, (_, index) => (
         <span
           key={index}
@@ -194,7 +194,7 @@ function CartePlan({ plan, periode }: { plan: Plan; periode: PeriodeId }) {
   const carte = (
     <div
       className={cn(
-        "relative flex h-full flex-col overflow-hidden bg-surface p-6 sm:p-7",
+        "relative flex h-full flex-col overflow-hidden bg-surface p-5 sm:p-7",
         /* 22 px = le rayon de feuille moins l'épaisseur du contour. Un rayon
            intérieur égal au rayon extérieur laisserait un liseré plus épais
            dans les angles qu'au milieu des côtés. */
@@ -226,8 +226,15 @@ function CartePlan({ plan, periode }: { plan: Plan; periode: PeriodeId }) {
       ) : null}
 
       {/* Hauteur réservée dans les trois cartes : sans elle, la formule
-          conseillée décalerait ses voisines d'une ligne. */}
-      <div className="relative flex min-h-8 items-start">
+          conseillée décalerait ses voisines d'une ligne. Réservée seulement à
+          partir de `lg` : empilées, les cartes ne s'alignent plus sur rien, et
+          la réserve devient 32 px de vide en haut de deux cartes sur trois. */}
+      <div
+        className={cn(
+          "relative items-start lg:flex lg:min-h-8",
+          plan.conseille ? "flex" : "hidden",
+        )}
+      >
         {plan.conseille ? (
           /* Pilule claire cerclée de vert, et non plus un aplat de menthe : sur
              une carte blanche posée sur un lavis vert, l'aplat faisait une
@@ -252,7 +259,7 @@ function CartePlan({ plan, periode }: { plan: Plan; periode: PeriodeId }) {
       <span
         aria-hidden
         className={cn(
-          "relative mt-4 flex size-11 items-center justify-center rounded-pill",
+          "relative mt-4 flex size-10 items-center justify-center rounded-pill sm:size-11",
           plan.conseille
             ? "bg-primary-cta text-white shadow-cta dark:text-[#06120c]"
             : "bg-primary-tint text-primary-strong",
@@ -261,7 +268,7 @@ function CartePlan({ plan, periode }: { plan: Plan; periode: PeriodeId }) {
         <Icone className="size-5" strokeWidth={1.75} />
       </span>
 
-      <h3 className="relative mt-5 text-[1.18rem] font-semibold tracking-tight text-ink">
+      <h3 className="relative mt-4 text-[1.18rem] font-semibold tracking-tight text-ink sm:mt-5">
         {plan.nom}
       </h3>
       <p className="relative mt-1.5 text-[0.9rem] text-ink-3">{plan.equipe}</p>
@@ -271,8 +278,9 @@ function CartePlan({ plan, periode }: { plan: Plan; periode: PeriodeId }) {
       </div>
 
       {/* Le prix. Hauteur réservée : la ligne annuelle en compte deux, et la
-          grille ne doit pas tressauter à chaque bascule. */}
-      <div className="relative mt-7 min-h-[7.5rem]">
+          grille ne doit pas tressauter à chaque bascule. La réserve suit la
+          taille du chiffre, qui est plus petit sur téléphone. */}
+      <div className="relative mt-6 min-h-[7rem] sm:mt-7 sm:min-h-[7.5rem]">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={periode}
@@ -328,7 +336,7 @@ function CartePlan({ plan, periode }: { plan: Plan; periode: PeriodeId }) {
 
       {/* Deux lignes, pas davantage : ce qui distingue la formule, et ce qui
           ne la distingue pas. */}
-      <ul className="relative mt-6 flex flex-col gap-3 border-t border-line pt-6">
+      <ul className="relative mt-5 flex flex-col gap-3 border-t border-line pt-5 sm:mt-6 sm:pt-6">
         <li className="flex items-start gap-2.5 text-[0.9rem] leading-snug text-ink-2">
           <HardDrive
             className="mt-px size-4.5 shrink-0 text-primary-deep"
@@ -351,7 +359,9 @@ function CartePlan({ plan, periode }: { plan: Plan; periode: PeriodeId }) {
         href={site.urls.inscription}
         variant={plan.conseille ? "primary" : "secondary"}
         className={cn(
-          "relative mt-8 w-full",
+          /* 48 px de haut au doigt, 44 à la souris : le seul bouton de la page
+             qu'on atteint après avoir lu un prix, il ne se rate pas. */
+          "relative mt-7 h-12 w-full sm:mt-8 sm:h-11",
           /* Sur fond blanc, un bouton blanc s'efface. On le tire vers le vert :
              il reste secondaire, mais il existe. */
           !plan.conseille &&
@@ -376,6 +386,101 @@ function CartePlan({ plan, periode }: { plan: Plan; periode: PeriodeId }) {
   );
 }
 
+/* ── Comparatif, version téléphone ────────────────────────────────────────
+   Le tableau est transposé, pas rétréci.
+
+   Sur un écran de 360 px, la version tabulaire est illisible : la colonne des
+   libellés en occupe la moitié, il reste de quoi montrer UNE formule, et il faut
+   défiler à l'horizontale pour atteindre les deux autres — sans jamais voir le
+   libellé et les trois valeurs en même temps. C'est-à-dire sans jamais pouvoir
+   comparer, ce qui est le seul usage du bloc.
+
+   Donc : un critère par bloc, les trois formules dessous. Rien à faire défiler,
+   rien à ouvrir. Et l'argument commercial devient la structure même du contenu —
+   deux critères changent, sept ne changent pas.                              */
+
+const CHANGE = COMPARATIF.filter((ligne) => ligne.valeurs);
+const PARTOUT = COMPARATIF.filter((ligne) => !ligne.valeurs);
+
+function ComparatifTelephone() {
+  return (
+    <div className="mt-6 flex flex-col gap-4 lg:hidden">
+      {/* ── Ce qui change ───────────────────────────────────────────────── */}
+      <section
+        aria-labelledby="comparatif-change"
+        className="overflow-hidden rounded-card bg-surface shadow-card ring-1 ring-line"
+      >
+        <h4
+          id="comparatif-change"
+          className="u-eyebrow border-b border-line px-4 py-3 text-ink-4"
+        >
+          Ce qui change
+        </h4>
+
+        <dl className="divide-y divide-line">
+          {CHANGE.map((ligne) => (
+            <div key={ligne.libelle} className="px-4 py-3.5">
+              <dt className="text-[0.88rem] font-medium text-ink">
+                {ligne.libelle}
+              </dt>
+
+              {/* Les trois valeurs sous le critère : c'est là que la comparaison
+                  se fait, en une seule fixation du regard. La formule conseillée
+                  porte la teinte de sa carte, pas une étiquette de plus. */}
+              <dd className="mt-2.5 flex flex-col gap-1">
+                {PLANS.map((plan, colonne) => (
+                  <span
+                    key={plan.id}
+                    className={cn(
+                      "flex items-baseline justify-between gap-3 rounded-field px-2.5 py-1.5",
+                      plan.conseille
+                        ? "bg-primary-tint-2 dark:bg-surface-muted"
+                        : "bg-transparent",
+                    )}
+                  >
+                    <span className="text-[0.8rem] text-ink-3">{plan.nom}</span>
+                    <span className="u-numeric text-[0.8rem] font-medium text-ink-2">
+                      {ligne.valeurs?.[colonne]}
+                    </span>
+                  </span>
+                ))}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+
+      {/* ── Ce qui ne change pas ────────────────────────────────────────── */}
+      <section
+        aria-labelledby="comparatif-partout"
+        className="overflow-hidden rounded-card bg-surface shadow-card ring-1 ring-line"
+      >
+        <h4
+          id="comparatif-partout"
+          className="u-eyebrow flex items-center gap-2 border-b border-line px-4 py-3 text-primary-deep"
+        >
+          <Check className="size-3.5 shrink-0" strokeWidth={3} aria-hidden />
+          Dans les trois formules
+        </h4>
+
+        {/* Une coche par ligne serait sept fois la même information. Le titre
+            du bloc la porte une fois : dessous, il ne reste que les libellés. */}
+        <ul className="divide-y divide-line">
+          {PARTOUT.map((ligne) => (
+            <li
+              key={ligne.libelle}
+              className="px-4 py-3 text-[0.86rem] leading-snug text-ink-2"
+            >
+              {ligne.libelle}
+            </li>
+          ))}
+        </ul>
+      </section>
+
+    </div>
+  );
+}
+
 /* ── Comparatif déplié ────────────────────────────────────────────────────*/
 
 function Comparatif({ periode }: { periode: PeriodeId }) {
@@ -390,7 +495,10 @@ function Comparatif({ periode }: { periode: PeriodeId }) {
         aria-expanded={ouvert}
         aria-controls={panneauId}
         className={cn(
-          "mx-auto flex items-center gap-2.5 rounded-pill bg-surface px-5 py-3",
+          /* Pleine largeur sur téléphone : c'est la porte d'entrée du bloc le
+             plus dense de la page, elle ne se rate pas. 48 px de haut. */
+          "flex w-full items-center justify-center gap-2.5 rounded-pill bg-surface px-5 py-3.5",
+          "sm:mx-auto sm:w-auto sm:py-3",
           "text-[0.92rem] font-medium text-ink-2 shadow-card ring-1 ring-line",
           "transition-[transform,color,box-shadow] duration-200 ease-(--ease-out-soft)",
           "hover:-translate-y-0.5 hover:text-ink hover:shadow-raised",
@@ -416,9 +524,16 @@ function Comparatif({ periode }: { periode: PeriodeId }) {
         )}
       >
         <div className="overflow-hidden">
-          {/* Le tableau garde sa largeur et défile de lui-même sur petit
-              écran : le rétrécir casserait la lecture en colonnes. */}
-          <div className="mt-7 overflow-x-auto rounded-card bg-surface shadow-card ring-1 ring-line">
+          {/* Aucun prix ici, à la différence de l'en-tête du tableau : les trois
+              cartes sont juste au-dessus, avec la bascule qui les pilote. Le
+              comparatif n'a pas à les répéter une troisième fois. */}
+          <ComparatifTelephone />
+
+          {/* La forme tabulaire n'apparaît qu'à partir de `lg`, où la page
+              dispose de 976 px : le tableau en demande 736, il tient donc
+              entier, sans jamais défiler. En dessous, c'est la version
+              transposée qui prend le relais — voir plus haut. */}
+          <div className="mt-7 hidden overflow-x-auto rounded-card bg-surface shadow-card ring-1 ring-line lg:block">
             {/* `border-separate` et non `border-collapse` : une cellule collante
                 perd ses bordures en mode fusionné, sur plusieurs moteurs. Les
                 filets sont donc portés par les cellules, une par une. */}
@@ -523,7 +638,7 @@ export function Pricing() {
        il fournit le repli sombre. */
     <Section id="tarifs" tone="tint" className="bg-section-tarifs">
       <Reveal>
-        <div className="flex flex-wrap items-end justify-between gap-6">
+        <div className="flex flex-wrap items-end justify-between gap-5 sm:gap-6">
           {/* En-tête écrit à la main plutôt que `SectionHeading` : sur l'aplat
               orange, ni le vert du sur-titre ni les gris du chapô ne passent
               le contraste. La section a ses deux tons, ils s'appliquent ici. */}
@@ -537,11 +652,15 @@ export function Pricing() {
               l&rsquo;équipe et le volume de documents changent.
             </p>
           </div>
+          {/* `fill` : sur téléphone la bascule tient toute la largeur, juste
+              au-dessus des cartes dont elle change les prix. Deux cibles de
+              160 × 44 px au lieu d'une pastille de 90 px calée à gauche. */}
           <Segmented
             options={PERIODES}
             value={periode}
             onChange={setPeriode}
             ariaLabel="Période de facturation"
+            fill
           />
         </div>
       </Reveal>
@@ -549,7 +668,7 @@ export function Pricing() {
       {/* Sous 1024 px les cartes s'empilent, bridées à 26 rem et centrées : une
           carte tarifaire large de toute la page ne se lit pas. À partir de lg,
           les trois colonnes, où le libellé « Conseillé » tient sur une ligne. */}
-      <RevealGroup className="mx-auto mt-12 grid max-w-[26rem] items-stretch gap-5 md:mt-16 lg:max-w-none lg:grid-cols-3 lg:gap-6">
+      <RevealGroup className="mx-auto mt-10 grid max-w-[26rem] items-stretch gap-4 sm:mt-12 sm:gap-5 md:mt-16 lg:max-w-none lg:grid-cols-3 lg:gap-6">
         {PLANS.map((plan) => (
           <PlanAnime key={plan.id} plan={plan} periode={periode} />
         ))}
@@ -559,7 +678,7 @@ export function Pricing() {
         {/* L'essai est l'argument d'entrée : il a droit à son propre encart.
             Liseré vert plutôt que halo animé — le halo appartient à la carte
             conseillée, et deux signaux qui pulsent n'en font plus aucun. */}
-        <div className="mt-12 flex flex-col items-center gap-4 rounded-card bg-surface p-6 text-center shadow-card ring-1 ring-primary/25 sm:flex-row sm:justify-center sm:gap-5 sm:text-left">
+        <div className="mt-10 flex flex-col items-center gap-4 rounded-card bg-surface p-5 text-center shadow-card ring-1 ring-primary/25 sm:mt-12 sm:flex-row sm:justify-center sm:gap-5 sm:p-6 sm:text-left">
           <span
             aria-hidden
             className="flex size-12 shrink-0 items-center justify-center rounded-pill bg-primary-tint text-primary-strong"

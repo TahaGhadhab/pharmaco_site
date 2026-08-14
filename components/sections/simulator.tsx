@@ -167,7 +167,35 @@ export function Simulator() {
         />
       </Reveal>
 
-      <div className="mt-12 grid items-start gap-6 lg:mt-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:gap-10">
+      {/* ── Le montant, collé en haut sur téléphone ─────────────────────────
+          Sur grand écran, la carte de résultat est à droite des curseurs et
+          reste visible pendant qu'on les règle : c'est tout l'intérêt du
+          simulateur, on voit le chiffre bouger. Empilée, cette carte tombe
+          500 px sous le dernier curseur — on déplace un curseur sans rien voir,
+          et il faut redescendre pour lire le résultat.
+
+          Ce bandeau rétablit le lien. Il est posé AVANT la grille, et non dans
+          l'une de ses cellules : le `sticky` d'un élément de grille ne peut pas
+          voyager au-delà de sa propre cellule, qui fait ici sa hauteur exacte.
+          Ici, son bloc conteneur est la section entière — il suit donc les
+          curseurs jusqu'au bout. `top-16` = la hauteur du header.
+
+          `aria-hidden` : le chiffre est déjà annoncé par le `role="status"` de
+          la carte, qui reste la source unique pour les lecteurs d'écran. */}
+      <div aria-hidden className="sticky top-16 z-30 mt-10 lg:hidden">
+        {/* Le montant et son unité, rien d'autre. Ni sur-titre ni équivalence :
+            la carte de résultat porte déjà les deux quelques centimètres plus
+            bas, et le bandeau reste collé pendant qu'on la lit — ce serait la
+            même phrase deux fois dans le même écran. */}
+        <div className="flex items-baseline justify-between gap-4 rounded-card bg-surface/95 px-4 py-3.5 shadow-raised ring-1 ring-line backdrop-blur-md">
+          <span className="u-numeric text-[1.6rem] leading-none font-semibold text-ink">
+            {euros(montant)}
+          </span>
+          <span className="u-eyebrow shrink-0 text-primary-deep">Par an</span>
+        </div>
+      </div>
+
+      <div className="mt-6 grid items-start gap-6 lg:mt-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:gap-10">
         {/* Colonne des curseurs */}
         <Reveal>
           <Card className="p-6 sm:p-8">
@@ -190,20 +218,27 @@ export function Simulator() {
             <Card className="p-6 shadow-float sm:p-8">
               <Eyebrow>Ce que le désordre coûte à votre officine</Eyebrow>
 
-              <p
-                aria-hidden
-                className="u-numeric mt-6 text-[clamp(2.5rem,1.9rem_+_2.2vw,3.4rem)] leading-[1.02] font-semibold text-ink"
-              >
-                {euros(montant)}
-              </p>
-              <p className="u-eyebrow mt-3 text-ink-4">Par an</p>
+              {/* Le grand chiffre n'a pas sa place ici sur téléphone : il est
+                  dans le bandeau collant, au-dessus des curseurs. Deux fois le
+                  même montant dans le même écran, dont un qu'on ne voit pas
+                  bouger, c'est un montant de trop. */}
+              <div className="hidden lg:block">
+                <p
+                  aria-hidden
+                  className="u-numeric mt-6 text-[clamp(2.5rem,1.9rem_+_2.2vw,3.4rem)] leading-[1.02] font-semibold text-ink"
+                >
+                  {euros(montant)}
+                </p>
+                <p className="u-eyebrow mt-3 text-ink-4">Par an</p>
+              </div>
+
               <p role="status" className="sr-only">
                 {euros(total)} par an, soit l&rsquo;équivalent de{" "}
                 {equivalent.phrase} à temps plein, ou {partRevenuTexte} du revenu
                 annuel moyen d&rsquo;un titulaire.
               </p>
 
-              <p className="mt-5 text-[1.02rem] leading-relaxed text-ink-2">
+              <p className="mt-6 text-[1.02rem] leading-relaxed text-ink-2 lg:mt-5">
                 Soit l&rsquo;équivalent de{" "}
                 <span className="u-numeric font-semibold text-ink">
                   {equivalent.valeur}

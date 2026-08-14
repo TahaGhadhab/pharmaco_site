@@ -122,17 +122,24 @@ export function Modules() {
         />
       </Reveal>
 
-      <RevealGroup className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-3 md:mt-16 lg:grid-cols-4 lg:gap-4">
+      {/* Quinze tuiles à deux colonnes : la vignette est resserrée sur téléphone
+          — pastille plus petite, texte d'un cran en dessous — pour que la
+          section reste une section de balayage et non un déroulé de 1 100 px. */}
+      <RevealGroup className="mt-10 grid grid-cols-2 gap-2.5 sm:mt-12 sm:grid-cols-3 sm:gap-3 md:mt-16 lg:grid-cols-4 lg:gap-4">
         {MODULES.map(({ name, line, icon: Icon }) => (
           <RevealItem key={name} className="h-full">
-            <div className="group flex h-full flex-col gap-3 rounded-card bg-page p-4 ring-1 ring-line transition-[transform,box-shadow,background-color] duration-200 ease-(--ease-out-soft) hover:-translate-y-0.5 hover:bg-surface hover:shadow-raised sm:p-5">
-              <IconBadge className="size-9">
-                <Icon className="size-4.5" strokeWidth={1.75} aria-hidden />
+            <div className="group flex h-full flex-col gap-2.5 rounded-card bg-page p-3.5 ring-1 ring-line transition-[transform,box-shadow,background-color] duration-200 ease-(--ease-out-soft) hover:-translate-y-0.5 hover:bg-surface hover:shadow-raised sm:gap-3 sm:p-5">
+              <IconBadge className="size-8 sm:size-9">
+                <Icon className="size-4 sm:size-4.5" strokeWidth={1.75} aria-hidden />
               </IconBadge>
 
               <div className="flex flex-col gap-1">
-                <h3 className="text-[0.95rem] font-semibold text-ink">{name}</h3>
-                <p className="text-[0.82rem] leading-snug text-ink-3">{line}</p>
+                <h3 className="text-[0.9rem] font-semibold text-ink sm:text-[0.95rem]">
+                  {name}
+                </h3>
+                <p className="text-[0.78rem] leading-snug text-ink-3 sm:text-[0.82rem]">
+                  {line}
+                </p>
               </div>
             </div>
           </RevealItem>

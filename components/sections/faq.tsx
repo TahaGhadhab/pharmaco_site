@@ -54,6 +54,10 @@ const QUESTIONS: Question[] = [
     r: "La taille de l'équipe et le volume de documents, rien d'autre. Les quinze modules sont dans les trois formules : aucune fonction n'est réservée à la formule du haut.",
   },
   {
+    q: "Peut-on vous parler avant de s'inscrire ?",
+    r: "Oui, en visio, écran partagé. Deux motifs : une découverte, où le service clients parcourt l'application avec vous, ou une initiation, où l'équipe prend le logiciel en main. Vous en faites la demande depuis la section Visio de cette page.",
+  },
+  {
     q: "Est-ce que mes confrères voient mes données ?",
     r: "Non. Chaque officine est cloisonnée : ses données portent son identifiant, et toute lecture est filtrée dessus. C'est vérifié automatiquement à chaque livraison.",
   },
@@ -107,7 +111,7 @@ function Item({
           aria-expanded={open}
           aria-controls={panneauId}
           onClick={onToggle}
-          className="group flex w-full items-start justify-between gap-6 py-5 text-left transition-colors duration-200 ease-(--ease-out-soft) hover:text-primary-strong"
+          className="group flex w-full items-start justify-between gap-4 py-5 text-left transition-colors duration-200 ease-(--ease-out-soft) hover:text-primary-strong sm:gap-6"
         >
           <span className="text-[1.02rem] font-medium tracking-tight text-ink group-hover:text-primary-strong">
             {question.q}
@@ -134,7 +138,10 @@ function Item({
         }}
         className="overflow-hidden"
       >
-        <p className="max-w-[62ch] pb-6 pr-10 text-[0.925rem] leading-relaxed text-ink-2">
+        {/* `pr-10` réserve la gouttière de la pastille +/− sur grand écran.
+            Sur téléphone, c'est 40 px pris à une colonne qui n'en a que 328 :
+            la réponse y perd une ligne tous les trois paragraphes. */}
+        <p className="max-w-[62ch] pb-6 text-[0.925rem] leading-relaxed text-ink-2 sm:pr-10">
           {question.r}
         </p>
       </motion.div>

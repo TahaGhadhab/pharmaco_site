@@ -20,6 +20,12 @@ import { cn } from "@/lib/utils";
  * Clavier : les flèches gauche/droite parcourent les segments, comme sur un
  * groupe de boutons radio. Chaque segment reste atteignable au Tab.
  * §11 : en `prefers-reduced-motion`, la pastille se pose sans glisser.
+ *
+ * ── Sur téléphone ────────────────────────────────────────────────────────
+ * Les segments montent à 44 px de haut : en dessous, la cible est plus petite
+ * que le doigt qui la vise. Et `fill` étale la bascule sur toute la largeur —
+ * une pastille de 90 px calée à gauche d'un écran de 360 px se rate une fois
+ * sur trois. À partir de `sm`, la bascule reprend sa taille de contenu.
  */
 
 export type SegmentedOption<T extends string> = {
@@ -39,12 +45,15 @@ export function Segmented<T extends string>({
   onChange,
   ariaLabel,
   className,
+  fill = false,
 }: {
   options: readonly SegmentedOption<T>[];
   value: T;
   onChange: (value: T) => void;
   ariaLabel: string;
   className?: string;
+  /** Pleine largeur sous `sm` — segments à parts égales. */
+  fill?: boolean;
 }) {
   const reduced = useReducedMotion();
   const pastille = `segmented-${useId()}`;
@@ -66,8 +75,9 @@ export function Segmented<T extends string>({
       role="group"
       aria-label={ariaLabel}
       className={cn(
-        "inline-flex shrink-0 items-center gap-1 rounded-pill bg-surface p-1",
+        "items-center gap-1 rounded-pill bg-surface p-1",
         "shadow-card ring-1 ring-line",
+        fill ? "flex w-full sm:inline-flex sm:w-auto" : "inline-flex shrink-0",
         className,
       )}
     >
@@ -91,7 +101,10 @@ export function Segmented<T extends string>({
             className={cn(
               "relative inline-flex items-center justify-center gap-2 rounded-pill",
               "transition-colors duration-200 ease-(--ease-out-soft)",
-              option.label ? "px-4 py-2 text-[0.9rem] font-medium" : "size-9",
+              option.label
+                ? "px-4 py-3 text-[0.9rem] font-medium sm:py-2"
+                : "size-10 sm:size-9",
+              fill && "flex-1 sm:flex-none",
               choisi
                 ? "text-white dark:text-[#06120c]"
                 : "text-ink-3 hover:bg-primary-tint-2 hover:text-primary-deep dark:hover:bg-surface-muted",

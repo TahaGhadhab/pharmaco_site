@@ -32,7 +32,7 @@ Sur la page, on coupe : un titre, deux phrases, on passe à autre chose.
 
 Aucun chiffre de gain produit · « certifié HDS » · « conforme RGPD » · « dispositif médical » ·
 toute promesse liée à la sécurité du patient ou à la délivrance · « remplace votre LGO » ·
-**témoignages inventés**, logos clients, compteurs d'officines ·
+**témoignages inventés**, logos clients ·
 mise en avant du module Formation · « messagerie instantanée » ou « temps réel » ·
 noms de patients dans les visuels ·
 « hébergement en France » (l'infrastructure est **européenne**) ·
@@ -62,6 +62,18 @@ taille de l'équipe et le volume de documents changent.
 gratuit* » du §15 du contexte et du §16 de l'argumentaire sont **caduques** :
 elles tenaient au fait qu'aucun montant n'existait et qu'aucun essai n'était
 prévu. Les deux existent désormais.
+
+**Compteur d'officines — l'interdiction est levée (14 août 2026).** Elle tenait au
+motif « rien de tel n'existe encore » (§16 du contexte). Le client atteste d'un parc
+réel : **7 officines, 43 membres actifs**. Le compteur vit dans `lib/adherents.ts` et
+**nulle part ailleurs** — trois valeurs, dont la date du relevé, qui s'affiche.
+Le hero les lit, `estPublie` masque le bloc si le parc retombe à zéro.
+
+⛔ **Aucune progression automatique, jamais.** Ni `Math.random()`, ni incrément au
+calendrier. Un compteur qui monte tout seul décrit en quelques semaines un parc que
+personne n'a signé, et il ne peut que le surestimer : c'est l'art. L121-2 C. conso,
+celui des faux avis. Pour qu'il monte sans intervention, il faut une source réelle —
+la marche à suivre est en fin de `lib/adherents.ts`.
 
 **Témoignages :** section prête dans `components/sections/testimonials.tsx`, masquée
 tant qu'aucun verbatim réel n'est saisi. Un avis fabriqué est une pratique commerciale

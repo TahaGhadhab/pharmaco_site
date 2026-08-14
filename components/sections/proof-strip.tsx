@@ -33,7 +33,11 @@ function Pastille({ fort, suite }: Mention) {
   return (
     <span
       className={[
-        "group/chip flex items-center gap-3 rounded-pill px-5 py-3 leading-none",
+        /* Pastille resserrée sur téléphone : à 1,02 rem et px-5, une seule
+           mention occupait plus que la largeur de l'écran — la boucle défilait
+           sans jamais en montrer une entière. */
+        "group/chip flex items-center gap-2.5 rounded-pill px-4 py-2.5 leading-none",
+        "sm:gap-3 sm:px-5 sm:py-3",
         "bg-page ring-1 ring-line",
         "transition-[background-color,box-shadow,color] duration-300 ease-(--ease-out-soft)",
         "hover:bg-primary-tint hover:ring-primary/40",
@@ -54,14 +58,14 @@ function Pastille({ fort, suite }: Mention) {
       <span className="whitespace-nowrap">
         <span
           className={[
-            "text-[1.02rem] font-semibold tracking-tight text-ink",
+            "text-[0.9rem] font-semibold tracking-tight text-ink sm:text-[1.02rem]",
             "transition-colors duration-300 ease-(--ease-out-soft)",
             "group-hover/chip:text-primary-strong",
           ].join(" ")}
         >
           {fort}
         </span>
-        <span className="text-[1.02rem] text-ink-4"> · {suite}</span>
+        <span className="text-[0.9rem] text-ink-4 sm:text-[1.02rem]"> · {suite}</span>
       </span>
     </span>
   );

@@ -3,9 +3,11 @@
 import type { ReactNode } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { ArrowRight, PackageX, TriangleAlert } from "lucide-react";
+import { Counter } from "@/components/ui/counter";
 import { ButtonLink, Section, Tag } from "@/components/ui/primitives";
 import { Reveal } from "@/components/ui/reveal";
 import { ScreenFrame } from "@/components/ui/screen-frame";
+import { ADHERENTS, estPublie } from "@/lib/adherents";
 import { useScreenMode } from "@/lib/screen-mode";
 import { screens } from "@/lib/screens";
 import { site } from "@/lib/site";
@@ -57,6 +59,31 @@ function FloatingCard({
   );
 }
 
+/* ── Une cellule du parc ──────────────────────────────────────────────────
+   Le libellé passe au vert et non au gris : en gris, posé sous les boutons, le
+   bloc se lisait comme une deuxième ligne de réassurance — une mention de bas
+   de page, pas une preuve. L'accent le fait exister.
+
+   Aucune réserve de hauteur sur le libellé : « OFFICINES ACTIVES » passe à deux
+   lignes en dessous de 360 px, mais les nombres sont en haut de cellule et les
+   libellés démarrent à la même ligne de base. Rien ne se désaligne, et réserver
+   deux lignes ne servait qu'à creuser un vide sur les écrans où il en tient une.
+                                                                              */
+
+function Parc({ valeur, libelle }: { valeur: number; libelle: string }) {
+  return (
+    <div className="px-4 py-4 sm:px-5 sm:py-5">
+      <Counter
+        value={valeur}
+        className="u-numeric text-[2rem] font-semibold text-ink sm:text-[2.4rem]"
+      />
+      <p className="u-eyebrow mt-2.5 leading-[1.35] text-primary-deep">
+        {libelle}
+      </p>
+    </div>
+  );
+}
+
 export function Hero() {
   /* Le visuel suit l'interrupteur posé plus bas dans la page : mobile ou
      ordinateur. La colonne s'élargit d'autant, et les deux fragments se
@@ -76,7 +103,26 @@ export function Hero() {
           </Reveal>
 
           <Reveal delay={0.06}>
-            <h1 className="mt-6 text-display font-semibold text-ink">
+            {/* ── Pourquoi une taille en `vw` sur petit écran ────────────────
+                La deuxième ligne est insécable, et c'est le surlignage post-it
+                qui l'impose : la bande est un calque posé sur la ligne, elle ne
+                sait pas se couper en deux.
+
+                Or « Zéro pour votre équipe. » mesure 10,27 em — mesuré, pas
+                estimé. À la taille que `text-display` donne sur un téléphone,
+                elle est donc plus large que sa colonne, et comme un élément de
+                grille a `min-width: auto`, c'est la grille entière qui
+                s'élargissait. L'`overflow-hidden` de la section rognait le
+                débord : sur 360 px on ne lisait pas la fin du titre. Le calcul
+                donne le seuil exact — en dessous de 425 px de viewport, ça ne
+                tenait sur aucun téléphone.
+
+                8,5vw laisse 3 % de marge sur toute la plage, jusqu'aux 320 px
+                du plus petit écran encore en service. Seule la taille est
+                reprise : l'interlignage et l'approche continuent de venir de
+                `text-display`, qui reprend la main à partir de 451 px — le
+                raccord est à 1 px près, et le desktop est intact. */}
+            <h1 className="mt-6 text-display font-semibold text-ink max-[450px]:text-[8.5vw]">
               Douze logiciels pour vos patients.
               <br />
               {/* Surlignage post-it : le désordre passe au premier plan. */}
@@ -116,8 +162,58 @@ export function Hero() {
             </div>
           </Reveal>
 
-          <Reveal delay={0.24}>
-            <p className="u-eyebrow mt-5 text-ink-3">
+          {/* ── Le parc, sous les deux boutons ───────────────────────────────
+              Position choisie : c'est juste après avoir lu la promesse et vu le
+              bouton que le visiteur se demande « qui d'autre s'en sert ». Le
+              bloc n'ajoute qu'une rangée — pas une section — et la même rangée
+              sert aux deux vues : deux nombres côte à côte tiennent dans les
+              328 px d'un téléphone comme dans la colonne du desktop. Seule
+              l'échelle du chiffre change, pour qu'il ne rivalise pas avec le
+              titre sur petit écran.
+
+              À zéro, `estPublie` retire le bloc — même garde que la section
+              avis. Voir `lib/adherents.ts` : le chiffre est réel, daté, et ne
+              progresse jamais tout seul. */}
+          {estPublie ? (
+            <Reveal delay={0.24}>
+              {/* Une plaque, pas deux lignes de texte. Elle emprunte son
+                  traitement à la carte de la formule conseillée — lavis vert
+                  qui descend du haut, trame `u-grid-faint` par-dessus — pour
+                  que la page n'ait qu'un seul vocabulaire pour ses encarts.
+
+                  Bridée à 26 rem : dans la colonne du hero, une plaque étirée
+                  sur 576 px redevient une barre. Sur téléphone, elle prend la
+                  largeur disponible et les deux cellules se partagent la
+                  rangée — la même structure sert aux deux vues. */}
+              <div className="relative mt-9 max-w-[26rem] overflow-hidden rounded-card bg-surface shadow-card ring-1 ring-line">
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-linear-to-b from-primary-tint/45 to-transparent"
+                />
+                <span
+                  aria-hidden
+                  className="u-grid-faint pointer-events-none absolute inset-0 opacity-40"
+                />
+
+                <div className="relative grid grid-cols-2 divide-x divide-line">
+                  <Parc
+                    valeur={ADHERENTS.officines}
+                    libelle="Officines actives"
+                  />
+                  <Parc valeur={ADHERENTS.membres} libelle="Membres actifs" />
+                </div>
+
+                {/* La date fait la différence entre un chiffre et une
+                    affirmation vérifiable. Elle vieillit exprès. */}
+                <p className="u-numeric relative border-t border-line px-4 py-2.5 text-[0.68rem] text-ink-4 sm:px-5">
+                  Relevé au {ADHERENTS.releve}
+                </p>
+              </div>
+            </Reveal>
+          ) : null}
+
+          <Reveal delay={0.3}>
+            <p className="u-eyebrow mt-6 text-ink-3">
               Vit à côté de votre LGO, pas dedans · Hébergement européen
             </p>
           </Reveal>
@@ -142,10 +238,15 @@ export function Hero() {
               surTelephone ? "max-w-[360px]" : "max-w-[560px]",
             )}
           >
+            {/* L'inclinaison n'existe qu'à partir de `sm`. Sous 640 px, le cadre
+                occupe déjà toute la largeur disponible : le faire pivoter de
+                2,5° élargit son emprise d'une trentaine de pixels, que
+                l'`overflow-hidden` de la section rogne — on voyait un coin de
+                téléphone coupé net. Droit, il entre entier. */}
             <ScreenFrame
               slot={screens.accueil}
-              phoneClassName="max-w-[360px] rotate-[-2.5deg]"
-              desktopClassName="max-w-[560px] rotate-[-1.5deg]"
+              phoneClassName="max-w-[360px] sm:rotate-[-2.5deg]"
+              desktopClassName="max-w-[560px] sm:rotate-[-1.5deg]"
             />
 
             {/* Fragment 1 — compteur de ruptures */}

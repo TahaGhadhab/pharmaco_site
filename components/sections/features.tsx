@@ -190,7 +190,10 @@ export function Features() {
       <div
         className={cn(
           "mt-10 snap-x snap-mandatory overflow-x-auto scroll-smooth",
-          "px-4 pb-4 sm:px-6",
+          /* `scroll-pl` et non `px` seul : sans marge d'accroche, une carte
+             accrochée se cale sur le bord du conteneur et non sur celui du
+             contenu — la gouttière de 16 px disparaît, la carte touche l'écran. */
+          "px-4 pb-4 scroll-pl-4 sm:px-6 sm:scroll-pl-6",
           "[scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
         )}
       >

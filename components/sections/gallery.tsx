@@ -127,8 +127,10 @@ export function Gallery() {
       <div
         ref={trackRef}
         className={cn(
-          "mt-12 flex snap-x snap-mandatory items-start gap-6 overflow-x-auto scroll-smooth",
-          "px-4 pb-4 sm:px-6",
+          "mt-10 flex snap-x snap-mandatory items-start gap-4 overflow-x-auto scroll-smooth sm:mt-12 sm:gap-6",
+          /* Marge d'accroche : sans elle, la capture accrochée se cale sur le
+             bord du conteneur et perd la gouttière de la page. */
+          "px-4 pb-4 scroll-pl-4 sm:px-6 sm:scroll-pl-6",
           "[scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
         )}
       >
