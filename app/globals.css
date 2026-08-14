@@ -74,16 +74,18 @@
   --pw-featured-text: var(--pw-primary-strong);
   --pw-featured-dot: var(--pw-primary);
 
-  /* Fond de la section tarifs — un jaune franc, pas un beige.
-     Le contraste ne dépend que de la LUMINANCE, jamais de la saturation : on
-     peut donc monter le chroma sans rien perdre, à condition de descendre
-     très peu en clarté. D'où l'ancre à #ffc107 plutôt qu'à l'orange du logo,
-     qui est sombre — trois fois plus de chroma qu'un ambre pâle, pour la même
-     lisibilité. 27 % de chroma, contre 9,6 % à la première tentative.
-     Le prix payé : `text-4` et `primary-deep` descendent d'un cran (voir
-     ci-dessus). Au-delà, `text-4` rejoindrait `text-3` et la hiérarchie des
-     gris s'effondrerait — c'est là qu'est la vraie limite, pas dans l'AA. */
-  --pw-section-tarifs: #feecb9;
+  /* Fond de la section tarifs — l'orange des pétales du logo, sans dilution.
+
+     Un aplat aussi soutenu ne laisse pas passer la palette de gris du site :
+     sur ce fond, `text-2` tombe à 3,87, `text-4` à 2,14, et le vert des
+     sur-titres à 2,15 — illisible, en plus de vibrer. La section a donc ses
+     deux tons à elle, et deux seulement :
+       · `sur-tarifs`   l'encre, 7,42 — les titres
+       · `sur-tarifs-2` un brun tiré de l'orange, 5,95 — sur-titres et texte
+     Ils ne servent QUE sur ce fond. Partout ailleurs, la palette normale. */
+  --pw-section-tarifs: #ee8b33;
+  --pw-sur-tarifs: #0e1414;
+  --pw-sur-tarifs-2: #3b2109;
 
   /* Post-it — signifiant du désordre, pas une couleur de marque.
      N'existe que dans la section « Le constat ». Ne pas l'employer ailleurs :
@@ -126,7 +128,12 @@
   --pw-featured-tint: var(--pw-primary-tint);
   --pw-featured-text: var(--pw-primary-strong);
   --pw-featured-dot: var(--pw-primary);
+
+  /* Pas d'aplat orange en sombre : la section retombe sur une surface neutre,
+     et ses deux tons redeviennent ceux de la palette. */
   --pw-section-tarifs: var(--pw-surface-muted);
+  --pw-sur-tarifs: var(--pw-text);
+  --pw-sur-tarifs-2: var(--pw-text-2);
   --pw-primary-strong: #48d089;
   --pw-primary-deep: #7ee0ab;
   --pw-primary-tint: #123723;
@@ -177,6 +184,8 @@
   --color-placeholder: var(--pw-placeholder);
 
   --color-section-tarifs: var(--pw-section-tarifs);
+  --color-sur-tarifs: var(--pw-sur-tarifs);
+  --color-sur-tarifs-2: var(--pw-sur-tarifs-2);
   --color-featured: var(--pw-featured);
   --color-featured-tint: var(--pw-featured-tint);
   --color-featured-text: var(--pw-featured-text);

@@ -20,7 +20,6 @@ import {
 import {
   ButtonLink,
   Section,
-  SectionHeading,
   Tag,
 } from "@/components/ui/primitives";
 import { Reveal, RevealGroup } from "@/components/ui/reveal";
@@ -525,11 +524,19 @@ export function Pricing() {
     <Section id="tarifs" tone="tint" className="bg-section-tarifs">
       <Reveal>
         <div className="flex flex-wrap items-end justify-between gap-6">
-          <SectionHeading
-            eyebrow="Tarifs"
-            title="Un abonnement par officine. Jamais par utilisateur."
-            lead="Tous les modules dans les trois formules. Seuls la taille de l'équipe et le volume de documents changent."
-          />
+          {/* En-tête écrit à la main plutôt que `SectionHeading` : sur l'aplat
+              orange, ni le vert du sur-titre ni les gris du chapô ne passent
+              le contraste. La section a ses deux tons, ils s'appliquent ici. */}
+          <div className="flex flex-col gap-4">
+            <p className="u-eyebrow text-sur-tarifs-2">Tarifs</p>
+            <h2 className="max-w-[22ch] text-h2 font-semibold text-sur-tarifs">
+              Un abonnement par officine. Jamais par utilisateur.
+            </h2>
+            <p className="max-w-[58ch] text-lead text-sur-tarifs-2">
+              Tous les modules dans les trois formules. Seuls la taille de
+              l&rsquo;équipe et le volume de documents changent.
+            </p>
+          </div>
           <Segmented
             options={PERIODES}
             value={periode}
@@ -572,7 +579,7 @@ export function Pricing() {
           </div>
         </div>
 
-        <p className="mt-5 text-center text-[0.78rem] leading-relaxed text-ink-4">
+        <p className="mt-5 text-center text-[0.78rem] leading-relaxed text-sur-tarifs-2">
           Montants hors taxes, par officine. Le passage d&rsquo;une formule à
           l&rsquo;autre suit la taille de votre équipe.
         </p>
