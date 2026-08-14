@@ -112,9 +112,14 @@ export const screens = {
       id: "location-desktop",
       src: "/screens/desktop/location.webp",
       variant: "desktop",
-      alt: "Fiche de location sur ordinateur : échéancier des périodes, paiements enregistrés et solde restant dû.",
+      alt: "Locations en cours sur ordinateur : le matériel prêté, l'état de la location, la date de retour attendue et la part déjà réglée sur le total dû.",
+      /* ⚠️ La capture livrée porte des PRÉNOMS de clients réels-ou-non en face
+         d'un matériel médical. Prénom seul, colonne « client » et non
+         « patient », location et non délivrance : on reste en deçà du §15.
+         Au premier doute sur l'origine de ces lignes, rejouer avec des
+         prénoms manifestement fictifs. */
       brief:
-        "Fiche location sur ordinateur, échéancier et solde restant dû visibles ensemble.",
+        "Locations en cours sur ordinateur, retour attendu et solde visibles. Prénoms fictifs uniquement.",
     },
   },
   planning: {
@@ -187,7 +192,7 @@ export const screens = {
       id: "gestionRh-desktop",
       src: "/screens/desktop/gestion-rh.webp",
       variant: "desktop",
-      alt: "Gestion RH sur ordinateur : membres de l'équipe, quota de places et rôles.",
+      alt: "Gestion RH sur ordinateur : places utilisées sur celles de la formule, invitation d'un membre, l'équipe avec son rôle, puis l'accès aux rôles et permissions.",
       brief:
         "Écran Gestion RH sur ordinateur — équipe, quota de sièges, entrée « Rôles & permissions ».",
     },
@@ -223,9 +228,13 @@ export const screens = {
       id: "ordonnance-desktop",
       src: "/screens/desktop/ordonnance-creation.webp",
       variant: "desktop",
-      alt: "Enregistrement d'une ordonnance sur ordinateur : dépôt de la photo à gauche, formulaire encore vide à droite.",
+      alt: "Enregistrement d'une ordonnance sur ordinateur : dépôt de la photo ou du PDF, champs patient et médicaments encore vides, note chiffrée, date de préparation.",
+      /* Deuxième version, celle-ci. La première était la LISTE des ordonnances,
+         avec quatre noms de patients en face de leur traitement — donnée de
+         santé nominative, §15 et RGPD. Elle est restée dans .screens-prives/,
+         hors dépôt et hors public/. Ne pas la ressortir. */
       brief:
-        "⚠️ À REPRENDRE — la version fournie le 14 août 2026 était la LISTE des ordonnances, avec quatre noms de patients en clair et le médicament associé à chacun. Un nom et un traitement sur la même ligne, c'est une donnée de santé nominative : §15, et RGPD par-dessus. Elle est dans .screens-prives/, hors dépôt. Rejouer sur le FORMULAIRE de création, vide, ou sur la liste avec des noms manifestement fictifs.",
+        "Écran « Nouvelle ordonnance » sur ordinateur, formulaire vide — sans aucune donnée patient.",
     },
   },
 
