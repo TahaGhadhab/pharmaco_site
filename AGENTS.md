@@ -47,10 +47,21 @@ il ne suit pas le thème. Ne pas le remplacer par l'ancienne fleur monochrome.
 « hébergement européen » · pour les locations, le vrai mécanisme est le verrou de
 restitution tant que le solde n'est pas nul.
 
-**Tarif — décision commerciale confirmée par le client :** abonnement par officine,
-calculé sur la taille de l'équipe, sans facturation à l'utilisateur. Premier mois
-offert, inscription sans moyen de paiement. **Ne pas afficher de montant** tant
-qu'aucun n'a été arrêté.
+**Tarif — montants arrêtés le 14 août 2026, la réserve est levée.** Abonnement par
+officine, calculé sur la taille de l'équipe, sans facturation à l'utilisateur.
+Trois formules (99 / 189 / 289 € HT par mois), −15 % en engagement annuel,
+**30 jours d'essai gratuit** et inscription sans moyen de paiement.
+
+La grille vit dans `lib/pricing.ts` et **nulle part ailleurs** : seul le prix
+mensuel y est saisi, l'annuel et l'économie en découlent par le calcul. FAQ,
+bandeau de réassurance et JSON-LD lisent ce même fichier — ne jamais retaper un
+montant à la main. Tous les modules sont dans toutes les formules ; seuls la
+taille de l'équipe et le volume de documents changent.
+
+⚠️ Les anciennes interdictions « pas de grille tarifaire », « jamais *essai
+gratuit* » du §15 du contexte et du §16 de l'argumentaire sont **caduques** :
+elles tenaient au fait qu'aucun montant n'existait et qu'aucun essai n'était
+prévu. Les deux existent désormais.
 
 **Témoignages :** section prête dans `components/sections/testimonials.tsx`, masquée
 tant qu'aucun verbatim réel n'est saisi. Un avis fabriqué est une pratique commerciale

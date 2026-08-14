@@ -166,7 +166,7 @@ function FlipCard({ postit }: { postit: Postit }) {
           </span>
 
           <span className="mt-auto flex flex-wrap items-center gap-x-3 gap-y-2">
-            <span className="inline-flex size-6 items-center justify-center rounded-pill bg-primary text-[0.58rem] font-bold text-white dark:text-[#06120c]">
+            <span className="inline-flex size-6 items-center justify-center rounded-pill bg-primary-cta text-[0.58rem] font-bold text-white dark:text-[#06120c]">
               {verso.acteur}
             </span>
             <span className="u-numeric text-[0.68rem] text-ink-3">

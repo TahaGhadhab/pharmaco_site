@@ -11,23 +11,79 @@
 :root {
   color-scheme: light;
 
-  /* Vert de marque — l'unique accent du produit */
+  /* Vert de marque — l'unique accent du produit.
+
+     `primary-deep` porte TOUS les sur-titres de la page. À #15894c il plafonnait
+     à 4,07 sur fond teinté : sous le seuil AA de 4,5 pour du texte de 11 px.
+     #137a45 passe à 4,55 sur le pire des fonds clairs — devenu le jaune de la
+     section tarifs. L'écart est invisible
+     à l'œil, il ne l'est pas pour qui lit mal de près — et une officine, c'est
+     aussi un titulaire de soixante ans devant un écran mal réglé.
+
+     `primary-cta` est le seul ajout : le vert de marque ne monte qu'à 3,49 sous
+     du texte blanc, donc le bouton principal — l'élément le plus vu du site —
+     échouait. Plutôt que de changer le vert de marque, qui ne porte jamais de
+     texte, on garde une teinte dédiée aux aplats sous libellé blanc. En sombre,
+     le texte du bouton est foncé : les deux valeurs s'y confondent. */
   --pw-primary: #1b9d58;
+  --pw-primary-cta: #17874c;
   --pw-primary-strong: #116f3e;
-  --pw-primary-deep: #15894c;
+  --pw-primary-deep: #137a45;
   --pw-primary-tint: #d2f0de;
   --pw-primary-tint-2: #eaf8f0;
 
-  /* Neutres et surfaces */
+  /* Neutres et surfaces.
+     `text-4` était à 3,32 sur fond teinté — il sert aux légendes et aux
+     mentions de bas de carte, c'est-à-dire au texte le plus petit de la page.
+     #656c6d le remet à 4,55 partout, jaune des tarifs compris, sans le
+     confondre avec `text-3` (#5a6563) — c'est cette marge-là qui fixe jusqu'où
+     le jaune peut monter. */
   --pw-page: #fdfbf7;
   --pw-surface: #ffffff;
   --pw-surface-muted: #f1f4f1;
-  --pw-border: #e8ecea;
+  --pw-border: #dde4e1;
   --pw-text: #0e1414;
   --pw-text-2: #3d4646;
   --pw-text-3: #5a6563;
-  --pw-text-4: #7f8889;
-  --pw-placeholder: #a8aead;
+  --pw-text-4: #656c6d;
+  --pw-placeholder: #98a09f;
+
+  /* Orange du logo — la corolle de `components/ui/logo.tsx`, à l'identique. */
+  --pw-logo-amber: #ee8b33;
+
+  /* ── Les deux couleurs échangent leur rôle ────────────────────────────────
+     Version A (précédente) : section verte, carte conseillée orange.
+     Version B (celle-ci)   : section ambrée, carte conseillée verte.
+
+     C'est le même principe dans les deux cas — l'accent de la carte doit être
+     l'autre couleur que celle du fond, sinon le contour se fond dans son
+     propre fond. Basculer de l'une à l'autre tient en deux blocs :
+       · `--pw-featured*` ci-dessous → ambre ou vert
+       · `--pw-section-tarifs`       → l'inverse
+     Rien d'autre à toucher : l'étiquette, le contour tournant et le lavis de
+     la carte lisent tous `--pw-featured`.
+
+     Version A, à recoller telle quelle si elle l'emporte :
+       --pw-featured: var(--pw-logo-amber);
+       --pw-featured-tint: #fce8d6;
+       --pw-featured-text: #9a5a21;
+       --pw-featured-dot: #c3722a;
+       --pw-section-tarifs: var(--pw-primary-tint-2);                        */
+  --pw-featured: var(--pw-primary);
+  --pw-featured-tint: var(--pw-primary-tint);
+  --pw-featured-text: var(--pw-primary-strong);
+  --pw-featured-dot: var(--pw-primary);
+
+  /* Fond de la section tarifs — un jaune franc, pas un beige.
+     Le contraste ne dépend que de la LUMINANCE, jamais de la saturation : on
+     peut donc monter le chroma sans rien perdre, à condition de descendre
+     très peu en clarté. D'où l'ancre à #ffc107 plutôt qu'à l'orange du logo,
+     qui est sombre — trois fois plus de chroma qu'un ambre pâle, pour la même
+     lisibilité. 27 % de chroma, contre 9,6 % à la première tentative.
+     Le prix payé : `text-4` et `primary-deep` descendent d'un cran (voir
+     ci-dessus). Au-delà, `text-4` rejoindrait `text-3` et la hiérarchie des
+     gris s'effondrerait — c'est là qu'est la vraie limite, pas dans l'AA. */
+  --pw-section-tarifs: #feecb9;
 
   /* Post-it — signifiant du désordre, pas une couleur de marque.
      N'existe que dans la section « Le constat ». Ne pas l'employer ailleurs :
@@ -59,6 +115,18 @@
   color-scheme: dark;
 
   --pw-primary: #2bb86c;
+  /* En sombre, le libellé du bouton est foncé (#06120c) : le vert de marque
+     donne déjà 7,44. Aucune raison de l'assombrir ici. */
+  --pw-primary-cta: #2bb86c;
+
+  /* En sombre, aucun fond coloré : la section retombe sur `surface-muted` et
+     l'accent reste le vert de marque, quelle que soit la version retenue en
+     clair. Un lavis ambré sur fond noir virerait au brun. */
+  --pw-featured: var(--pw-primary);
+  --pw-featured-tint: var(--pw-primary-tint);
+  --pw-featured-text: var(--pw-primary-strong);
+  --pw-featured-dot: var(--pw-primary);
+  --pw-section-tarifs: var(--pw-surface-muted);
   --pw-primary-strong: #48d089;
   --pw-primary-deep: #7ee0ab;
   --pw-primary-tint: #123723;
@@ -67,12 +135,13 @@
   --pw-page: #0b0f0e;
   --pw-surface: #131918;
   --pw-surface-muted: #1a2120;
-  --pw-border: #242d2b;
+  --pw-border: #2b3634;
   --pw-text: #edf2f0;
   --pw-text-2: #b6c1be;
   --pw-text-3: #8e9a96;
-  --pw-text-4: #6f7a77;
-  --pw-placeholder: #5a6462;
+  /* Même correction qu'en clair, dans l'autre sens : 4,01 sur `surface`. */
+  --pw-text-4: #7f8986;
+  --pw-placeholder: #656f6d;
 
   --pw-danger: #fb7185;
   --pw-danger-tint: #3d1720;
@@ -91,6 +160,7 @@
 
 @theme inline {
   --color-primary: var(--pw-primary);
+  --color-primary-cta: var(--pw-primary-cta);
   --color-primary-strong: var(--pw-primary-strong);
   --color-primary-deep: var(--pw-primary-deep);
   --color-primary-tint: var(--pw-primary-tint);
@@ -105,6 +175,12 @@
   --color-ink-3: var(--pw-text-3);
   --color-ink-4: var(--pw-text-4);
   --color-placeholder: var(--pw-placeholder);
+
+  --color-section-tarifs: var(--pw-section-tarifs);
+  --color-featured: var(--pw-featured);
+  --color-featured-tint: var(--pw-featured-tint);
+  --color-featured-text: var(--pw-featured-text);
+  --color-featured-dot: var(--pw-featured-dot);
 
   --color-postit: var(--pw-postit);
   --color-postit-edge: var(--pw-postit-edge);
@@ -186,6 +262,22 @@
   55%,
   100% {
     transform: translateY(210%);
+  }
+}
+
+/* Angle du contour tournant.
+   `@property` est ce qui rend la chose possible : une variable CSS déclarée
+   comme `<angle>` s'interpole, une variable ordinaire ne s'interpole pas — le
+   dégradé sauterait d'un état à l'autre au lieu de tourner. */
+@property --pw-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes border-spin {
+  to {
+    --pw-angle: 360deg;
   }
 }
 
@@ -282,6 +374,47 @@
       0 0 18px -6px color-mix(in oklab, var(--pw-primary) 32%, transparent);
     animation: ring-glow 4.5s var(--ease-in-out-soft) infinite;
   }
+
+  /* Contour lumineux tournant — réservé à la formule conseillée.
+     Le dégradé conique est le FOND de l'élément : la carte, posée par-dessus,
+     n'en laisse voir que l'épaisseur du padding. Pas de pseudo-élément en
+     z-index négatif, qui disparaîtrait derrière le fond de son parent.
+
+     La lueur portée ne tourne pas, elle : deux mouvements sur le même objet
+     s'annulent à l'œil. §11 — en prefers-reduced-motion la rotation s'arrête
+     et il reste un contour vert fixe. On neutralise le mouvement, pas le signal. */
+  .u-border-spin {
+    /* L'accent de la formule conseillée, celui-là même que porte l'étiquette :
+       orange du logo en clair, vert de marque en sombre. Une seule variable
+       pilote le dégradé ET la lueur — elles ne peuvent pas diverger, et elles
+       ne peuvent pas diverger de l'étiquette non plus. */
+    --pw-spin: var(--pw-featured);
+
+    /* Un socle toujours présent, et un arc vif qui en fait le tour.
+       La première version partait de `transparent` : sur fond clair, les trois
+       quarts du contour disparaissaient et il ne restait qu'une lueur fugace
+       qu'on ne voyait pas passer. Le socle à 35 % garantit un liseré lisible
+       en permanence — l'animation ajoute, elle ne conditionne plus. */
+    background: conic-gradient(
+      from var(--pw-angle),
+      color-mix(in oklab, var(--pw-spin) 35%, transparent) 0deg,
+      var(--pw-spin) 55deg,
+      var(--pw-spin) 95deg,
+      color-mix(in oklab, var(--pw-spin) 55%, transparent) 150deg,
+      color-mix(in oklab, var(--pw-spin) 32%, transparent) 210deg,
+      color-mix(in oklab, var(--pw-spin) 32%, transparent) 300deg,
+      color-mix(in oklab, var(--pw-spin) 35%, transparent) 360deg
+    );
+    animation: border-spin 7s linear infinite;
+    /* La lueur ET l'ombre portée dans la même déclaration : `shadow-float` en
+       classe à côté écraserait celle-ci, `box-shadow` ne s'additionne pas
+       d'une règle à l'autre. */
+    box-shadow:
+      0 0 0 1px color-mix(in oklab, var(--pw-spin) 14%, transparent),
+      0 10px 34px -12px color-mix(in oklab, var(--pw-spin) 55%, transparent),
+      var(--pw-shadow-float);
+  }
+
 
   /* Trame très discrète pour les zones « produit » */
   .u-grid-faint {

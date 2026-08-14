@@ -7,6 +7,7 @@ import { Founders } from "@/components/sections/founders";
 import { Features } from "@/components/sections/features";
 import { Modules } from "@/components/sections/modules";
 import { Gallery } from "@/components/sections/gallery";
+import { Pricing } from "@/components/sections/pricing";
 import { Testimonials } from "@/components/sections/testimonials";
 import { FinalCta } from "@/components/sections/final-cta";
 import { Faq } from "@/components/sections/faq";
@@ -21,6 +22,10 @@ import { SiteFooter } from "@/components/sections/site-footer";
  *     avant de lire les fonctionnalités. Tout ce qui suit se lit autrement.
  *  3. Les fonds alternent (page / surface / tint) sans jamais se répéter deux
  *     fois de suite — la séparation se fait par la surface, pas par un trait.
+ *
+ * Les tarifs arrivent en dernier lieu produit, après les fonctionnalités : on ne
+ * demande pas à un visiteur ce que ça coûte avant de lui avoir montré ce que
+ * c'est. Il a déjà, grâce au simulateur, un ordre de grandeur en tête.
  *
  * La FAQ est volontairement **après** le CTA de clôture : le visiteur convaincu
  * part sur le bouton, celui qui hésite trouve ses réponses juste en dessous.
@@ -38,6 +43,7 @@ export default function Home() {
         <Gallery />
         <Modules />
         <Features />
+        <Pricing />
         <Testimonials />
         <FinalCta />
         <Faq />

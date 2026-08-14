@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ImageIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useResolvedScreen } from "@/lib/screen-mode";
 import { site } from "@/lib/site";
 import type { ScreenSlot } from "@/lib/screens";
 
@@ -162,17 +164,85 @@ export function DesktopFrame({
   );
 }
 
-/** Choisit automatiquement le bon cadre selon le slot. */
+/**
+ * Choisit le bon cadre selon l'affichage demandé — mobile ou ordinateur.
+ *
+ * L'écran montré vient de `useResolvedScreen` : si le slot n'a pas de
+ * contrepartie dans l'affichage courant, il reste tel quel.
+ *
+ * ── Pourquoi `popLayout` et non `wait` ────────────────────────────────────
+ * Un téléphone et un écran d'ordinateur n'ont pas la même hauteur. En mode
+ * `wait`, le cadre sortant disparaît AVANT que l'entrant n'arrive : le bloc
+ * s'écrase à zéro puis se rouvre, et toute la page sursaute deux fois.
+ *
+ * `popLayout` sort le cadre sortant du flux — il continue de s'effacer par
+ * dessus — pendant que l'entrant prend sa place immédiatement. Le conteneur,
+ * lui, porte `layout` : il glisse de l'ancienne hauteur à la nouvelle au lieu
+ * de sauter. Un seul mouvement continu, comme la pastille des tarifs.
+ *
+ * Les largeurs diffèrent trop d'une variante à l'autre pour tenir dans une
+ * seule classe : `phoneClassName` et `desktopClassName` s'ajoutent à
+ * `className` selon ce qui est affiché.
+ */
 export function ScreenFrame({
   slot,
   className,
+  phoneClassName,
+  desktopClassName,
 }: {
   slot: ScreenSlot;
   className?: string;
+  phoneClassName?: string;
+  desktopClassName?: string;
 }) {
-  return slot.variant === "phone" ? (
-    <PhoneFrame slot={slot} className={className} />
-  ) : (
-    <DesktopFrame slot={slot} className={className} />
+  const montre = useResolvedScreen(slot);
+  const reduced = useReducedMotion();
+  const phone = montre.variant === "phone";
+  const classes = cn(className, phone ? phoneClassName : desktopClassName);
+
+  return (
+    <motion.div
+      layout={reduced ? false : "size"}
+      transition={{
+        layout: { duration: reduced ? 0 : 0.42, ease: [0.22, 1, 0.36, 1] },
+      }}
+      className="relative flex w-full justify-center"
+    >
+      <AnimatePresence mode="popLayout" initial={false}>
+        <motion.div
+          key={montre.id}
+          /* `layout` sur l'enfant aussi, et ce n'est pas décoratif : le
+             conteneur anime sa taille par une mise à l'échelle. Sans nœud de
+             projection ici, la capture serait étirée pendant les 420 ms.
+             C'est ce que corrige `layout` — pas de scale dans les variantes
+             pour la même raison, il se composerait avec celui du parent. */
+          layout={reduced ? false : "position"}
+          initial={
+            reduced
+              ? { opacity: 0 }
+              : { opacity: 0, y: 10, filter: "blur(8px)" }
+          }
+          animate={
+            reduced ? { opacity: 1 } : { opacity: 1, y: 0, filter: "blur(0px)" }
+          }
+          exit={
+            reduced
+              ? { opacity: 0 }
+              : { opacity: 0, y: -6, filter: "blur(8px)" }
+          }
+          transition={{
+            duration: reduced ? 0.15 : 0.44,
+            ease: [0.22, 1, 0.36, 1],
+          }}
+          className="flex w-full justify-center"
+        >
+          {phone ? (
+            <PhoneFrame slot={montre} className={classes} />
+          ) : (
+            <DesktopFrame slot={montre} className={classes} />
+          )}
+        </motion.div>
+      </AnimatePresence>
+    </motion.div>
   );
 }

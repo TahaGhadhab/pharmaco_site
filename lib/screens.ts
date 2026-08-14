@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Registre central des captures d'écran de l'application.
  *
  * ┌─ COMMENT AJOUTER UNE CAPTURE ────────────────────────────────────────────┐
@@ -12,13 +12,25 @@
  * entière — voir `components/ui/screen-frame.tsx`. Gardez simplement le même
  * cadrage d'une capture à l'autre, pour que la galerie reste régulière.
  *
+ * ── Les deux affichages ────────────────────────────────────────────────────
+ * La page porte un interrupteur mobile / ordinateur (`ScreenModeToggle`).
+ * Chaque écran peut donc exister en deux versions, liées par `alternate` :
+ *
+ *   slot principal        →  public/screens/<nom>.webp          (celui d'origine)
+ *   sa contrepartie       →  public/screens/desktop/<nom>.webp  (vue ordinateur)
+ *                        ou  public/screens/mobile/<nom>.webp   (vue mobile)
+ *
+ * La contrepartie vit toujours dans le sous-dossier de SA variante. Un écran
+ * sans `alternate` reste affiché tel quel dans les deux modes : c'est le repli,
+ * jamais une erreur.
+ *
  * ⛔ §15 : aucune capture ne doit contenir de nom de patient réel.
  *          N'utiliser que des données fictives évidentes.
  */
 
 export type ScreenVariant = "phone" | "desktop";
 
-export type ScreenSlot = {
+type ScreenBase = {
   id: string;
   src: string;
   variant: ScreenVariant;
@@ -27,6 +39,17 @@ export type ScreenSlot = {
   /** Ce qu'il faut capturer. Affiché dans le cadre de réservation. */
   brief: string;
 };
+
+export type ScreenSlot = ScreenBase & {
+  /** Le même écran dans l'autre variante. Absent = pas de bascule pour cet écran. */
+  alternate?: ScreenBase;
+};
+
+/** L'écran à montrer pour l'affichage demandé. Sans contrepartie, on garde l'original. */
+export function resolveScreen(slot: ScreenSlot, mode: ScreenVariant): ScreenSlot {
+  if (slot.variant === mode) return slot;
+  return slot.alternate ?? slot;
+}
 
 export const screens = {
   /* ── Fournies ─────────────────────────────────────────────────────────── */
@@ -38,6 +61,13 @@ export const screens = {
     alt: "Écran d'accueil : bouton de démarrage de session, compteurs de tâches, de ruptures ouvertes, de locations à rendre et d'ordonnances à servir, puis la carte de l'équipe.",
     brief:
       "Accueil — le bouton « Démarrer la session », les quatre compteurs, la carte Équipe.",
+    alternate: {
+      id: "accueil-desktop",
+      src: "/screens/desktop/accueil.webp",
+      variant: "desktop",
+      alt: "Écran d'accueil sur ordinateur : compteurs de tâches, de ruptures ouvertes, de locations à rendre et d'ordonnances à servir, disposés en largeur.",
+      brief: "Accueil sur ordinateur — les quatre compteurs et la carte Équipe.",
+    },
   },
   scan: {
     id: "scan",
@@ -46,6 +76,14 @@ export const screens = {
     alt: "Déclaration d'une rupture : champ code-barres CIP avec le bouton de scan par la caméra.",
     brief:
       "Formulaire « Nouvelle rupture », avec le champ CIP et le bouton scanner bien visibles.",
+    alternate: {
+      id: "scan-desktop",
+      src: "/screens/desktop/rupture-creation.webp",
+      variant: "desktop",
+      alt: "Déclaration d'une rupture sur ordinateur : champ code-barres CIP et recherche par nom de présentation.",
+      brief:
+        "Formulaire « Nouvelle rupture » sur ordinateur, champ CIP bien visible.",
+    },
   },
   ruptures: {
     id: "ruptures",
@@ -54,6 +92,14 @@ export const screens = {
     alt: "Liste des ruptures de l'officine, avec leur portée et les alternatives proposées.",
     brief:
       "Liste des ruptures ouvertes, si possible avec une ligne portant une alerte ANSM.",
+    alternate: {
+      id: "ruptures-desktop",
+      src: "/screens/desktop/ruptures.webp",
+      variant: "desktop",
+      alt: "Liste des ruptures sur ordinateur : portée, alternatives et alertes ANSM en colonnes.",
+      brief:
+        "Liste des ruptures sur ordinateur, si possible avec une ligne portant une alerte ANSM.",
+    },
   },
   location: {
     id: "location",
@@ -62,6 +108,14 @@ export const screens = {
     alt: "Location de matériel médical : échéancier de périodes, paiements enregistrés et solde restant dû.",
     brief:
       "Fiche location avec l'échéancier, le solde restant dû, et si possible le refus de restitution.",
+    alternate: {
+      id: "location-desktop",
+      src: "/screens/desktop/location.webp",
+      variant: "desktop",
+      alt: "Fiche de location sur ordinateur : échéancier des périodes, paiements enregistrés et solde restant dû.",
+      brief:
+        "Fiche location sur ordinateur, échéancier et solde restant dû visibles ensemble.",
+    },
   },
   planning: {
     id: "planning",
@@ -70,6 +124,14 @@ export const screens = {
     alt: "Planning d'équipe affichant les créneaux et les heures d'arrivée et de départ réelles.",
     brief:
       "Planning de la semaine, heures d'arrivée et de départ remontées du pointage bien lisibles.",
+    alternate: {
+      id: "planning-desktop",
+      src: "/screens/desktop/planning.webp",
+      variant: "desktop",
+      alt: "Planning d'équipe sur ordinateur : la semaine entière, créneaux et heures réelles par personne.",
+      brief:
+        "Planning de la semaine sur ordinateur, une colonne par jour, heures de pointage lisibles.",
+    },
   },
   qualite: {
     id: "qualite",
@@ -77,6 +139,13 @@ export const screens = {
     variant: "desktop",
     alt: "Tableau de bord qualité : contrôles à faire, non-conformités, incidents du mois et taux de conformité.",
     brief: "Tableau de bord qualité + l'historique horodaté en dessous.",
+    alternate: {
+      id: "qualite-mobile",
+      src: "/screens/mobile/qualite.webp",
+      variant: "phone",
+      alt: "Tableau de bord qualité sur mobile : contrôles à faire, non-conformités et taux de conformité empilés.",
+      brief: "Tableau de bord qualité sur mobile, les contrôles à faire en tête.",
+    },
   },
   taches: {
     id: "taches",
@@ -84,6 +153,14 @@ export const screens = {
     variant: "phone",
     alt: "Liste des tâches de l'officine, avec leur responsable et leur échéance.",
     brief: "Tâches assignées, avec au moins une échéance et un responsable visibles.",
+    alternate: {
+      id: "taches-desktop",
+      src: "/screens/desktop/taches.webp",
+      variant: "desktop",
+      alt: "Liste des tâches sur ordinateur : responsable, échéance et état en colonnes.",
+      brief:
+        "Tâches assignées sur ordinateur, avec échéance et responsable en colonnes.",
+    },
   },
   commandes: {
     id: "commandes",
@@ -91,6 +168,14 @@ export const screens = {
     variant: "phone",
     alt: "Commandes fournisseurs, avec leur liste de produits et la date de livraison attendue.",
     brief: "Commandes en cours, avec une date de livraison attendue.",
+    alternate: {
+      id: "commandes-desktop",
+      src: "/screens/desktop/commandes.webp",
+      variant: "desktop",
+      alt: "Commandes fournisseurs sur ordinateur : liste des produits et date de livraison attendue.",
+      brief:
+        "Commandes en cours sur ordinateur, avec une date de livraison attendue.",
+    },
   },
   gestionRh: {
     id: "gestionRh",
@@ -98,6 +183,14 @@ export const screens = {
     variant: "phone",
     alt: "Gestion RH : membres de l'équipe, quota de places et accès aux rôles et permissions.",
     brief: "Écran Gestion RH — équipe, quota de sièges, entrée « Rôles & permissions ».",
+    alternate: {
+      id: "gestionRh-desktop",
+      src: "/screens/desktop/gestion-rh.webp",
+      variant: "desktop",
+      alt: "Gestion RH sur ordinateur : membres de l'équipe, quota de places et rôles.",
+      brief:
+        "Écran Gestion RH sur ordinateur — équipe, quota de sièges, entrée « Rôles & permissions ».",
+    },
   },
   chat: {
     id: "chat",
@@ -105,6 +198,14 @@ export const screens = {
     variant: "phone",
     alt: "Messagerie interne de l'officine : canaux thématiques et conversations directes.",
     brief: "Liste des canaux + une conversation ouverte. Aucun contenu patient à l'écran.",
+    alternate: {
+      id: "chat-desktop",
+      src: "/screens/desktop/chat.webp",
+      variant: "desktop",
+      alt: "Messagerie interne sur ordinateur : les canaux à gauche, la conversation à droite.",
+      brief:
+        "Canaux à gauche, conversation ouverte à droite. Aucun contenu patient à l'écran.",
+    },
   },
 
   /** Formulaire vide, aucune donnée patient — et il porte à l'écran la mention
@@ -116,6 +217,14 @@ export const screens = {
     alt: "Enregistrement d'une ordonnance : dépôt de la photo, lecture automatique en cours, champs patient et médicaments encore vides.",
     brief:
       "Écran « Nouvelle ordonnance », analyse en cours, formulaire vide — sans aucune donnée patient.",
+    alternate: {
+      id: "ordonnance-desktop",
+      src: "/screens/desktop/ordonnance-creation.webp",
+      variant: "desktop",
+      alt: "Enregistrement d'une ordonnance sur ordinateur : dépôt de la photo à gauche, formulaire encore vide à droite.",
+      brief:
+        "Écran « Nouvelle ordonnance » sur ordinateur, formulaire vide — sans aucune donnée patient.",
+    },
   },
 
   /* ── En attente ─────────────────────────────────────────────────────────── */
@@ -135,6 +244,14 @@ export const screens = {
     alt: "Agenda agrégé : échéances de tâches, livraisons attendues et fins de location sur une seule liste.",
     brief:
       "Agenda montrant des lignes d'origines différentes le même jour (une tâche, une livraison, une fin de location).",
+    alternate: {
+      id: "agenda-desktop",
+      src: "/screens/desktop/agenda.webp",
+      variant: "desktop",
+      alt: "Agenda agrégé sur ordinateur : tâches, livraisons et fins de location sur le mois.",
+      brief:
+        "Agenda sur ordinateur, des lignes d'origines différentes le même jour.",
+    },
   },
   permissions: {
     id: "permissions",
@@ -142,6 +259,13 @@ export const screens = {
     variant: "desktop",
     alt: "Matrice « Rôles & permissions » : sept rôles, droits configurables par le titulaire.",
     brief: "Écran Rôles & permissions, la matrice 7 rôles × permissions.",
+    alternate: {
+      id: "permissions-mobile",
+      src: "/screens/mobile/permissions.webp",
+      variant: "phone",
+      alt: "Rôles et permissions sur mobile : un rôle ouvert, ses droits en liste.",
+      brief: "Écran Rôles & permissions sur mobile, un rôle déplié.",
+    },
   },
 } as const satisfies Record<string, ScreenSlot>;
 

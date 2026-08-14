@@ -19,7 +19,9 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Eyebrow, Section, SectionHeading } from "@/components/ui/primitives";
 import { Reveal } from "@/components/ui/reveal";
 import { ScreenFrame } from "@/components/ui/screen-frame";
-import { screens, type ScreenSlot } from "@/lib/screens";
+import { ScreenModeToggle } from "@/components/ui/screen-mode-toggle";
+import { useResolvedScreen, useScreenMode } from "@/lib/screen-mode";
+import { screens, resolveScreen, type ScreenSlot } from "@/lib/screens";
 import { cn } from "@/lib/utils";
 
 /**
@@ -87,10 +89,14 @@ function DriftingItem({
   const amplitude = (index % 2 === 0 ? 1 : -1) * (16 + (index % 3) * 9);
   const y = useTransform(progress, [0, 1], [amplitude, -amplitude]);
 
+  /* La colonne est réservée par la capture réellement affichée : une vue
+     ordinateur occupe presque le double d'une vue mobile. */
+  const montre = useResolvedScreen(slot);
+
   return (
     <motion.figure
       style={{ y }}
-      className={cn("flex shrink-0 flex-col gap-4", widthFor(slot))}
+      className={cn("flex shrink-0 flex-col gap-4", widthFor(montre))}
     >
       <ScreenFrame slot={slot} className="max-w-none" />
       <figcaption className="flex items-baseline gap-2.5">
@@ -156,11 +162,14 @@ function PinnedTour() {
       style={{ height: `calc(100vh + ${distance}px)` }}
     >
       <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden">
-        <div className="mx-auto w-full max-w-(--container-page) px-6">
-          <Eyebrow>Le tour de l&apos;application</Eyebrow>
-          <h2 className="mt-4 text-h2 font-semibold text-ink">
-            Regardez-la travailler.
-          </h2>
+        <div className="mx-auto flex w-full max-w-(--container-page) flex-wrap items-end justify-between gap-6 px-6">
+          <div>
+            <Eyebrow>Le tour de l&apos;application</Eyebrow>
+            <h2 className="mt-4 text-h2 font-semibold text-ink">
+              Regardez-la travailler.
+            </h2>
+          </div>
+          <ScreenModeToggle />
         </div>
 
         <motion.div
@@ -199,6 +208,7 @@ function ScrollableTour() {
   const trackRef = useRef<HTMLDivElement>(null);
   const [atStart, setAtStart] = useState(true);
   const [atEnd, setAtEnd] = useState(false);
+  const mode = useScreenMode();
 
   const sync = useCallback(() => {
     const el = trackRef.current;
@@ -239,25 +249,28 @@ function ScrollableTour() {
               title="Regardez-la travailler."
               lead={SOUS_TITRE}
             />
-            <div className="hidden gap-2 md:flex">
-              <button
-                type="button"
-                onClick={() => nudge(-1)}
-                disabled={atStart}
-                aria-label="Écran précédent"
-                className={arrow}
-              >
-                <ArrowLeft className="size-4.5" strokeWidth={1.75} />
-              </button>
-              <button
-                type="button"
-                onClick={() => nudge(1)}
-                disabled={atEnd}
-                aria-label="Écran suivant"
-                className={arrow}
-              >
-                <ArrowRight className="size-4.5" strokeWidth={1.75} />
-              </button>
+            <div className="flex items-center gap-3">
+              <ScreenModeToggle />
+              <div className="hidden gap-2 md:flex">
+                <button
+                  type="button"
+                  onClick={() => nudge(-1)}
+                  disabled={atStart}
+                  aria-label="Écran précédent"
+                  className={arrow}
+                >
+                  <ArrowLeft className="size-4.5" strokeWidth={1.75} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => nudge(1)}
+                  disabled={atEnd}
+                  aria-label="Écran suivant"
+                  className={arrow}
+                >
+                  <ArrowRight className="size-4.5" strokeWidth={1.75} />
+                </button>
+              </div>
             </div>
           </div>
         </Reveal>
@@ -276,7 +289,9 @@ function ScrollableTour() {
             key={slot.id}
             className={cn(
               "flex shrink-0 snap-start flex-col gap-4",
-              slot.variant === "phone" ? "w-[18rem]" : "w-[34rem] max-w-[85vw]",
+              resolveScreen(slot, mode).variant === "phone"
+                ? "w-[18rem]"
+                : "w-[34rem] max-w-[85vw]",
             )}
           >
             <ScreenFrame slot={slot} className="max-w-none" />

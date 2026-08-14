@@ -1,3 +1,4 @@
+import { PLANS, tarif } from "@/lib/pricing";
 import { SITE_URL, site } from "@/lib/site";
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -9,9 +10,13 @@ import { SITE_URL, site } from "@/lib/site";
    ⛔ §15 — rien ici ne doit dépasser ce qui est vérifiable :
       · pas d'`aggregateRating` ni de `review` : aucun avis réel n'existe,
         et en fabriquer un est une pratique commerciale trompeuse (L121-2).
-      · pas d'`offers` avec un `price` : aucun montant n'a été arrêté.
       · pas de mention de certification, d'hébergement français, ni de
         conformité déclarée.
+
+   Les `offers` reprennent la grille arrêtée par le client. Les montants ne
+   sont pas recopiés : ils viennent de `lib/pricing.ts`, comme la section
+   tarifs. Un prix affiché à l'écran et un prix balisé qui divergent, c'est
+   Google qui signale l'écart — et un client qui a raison de le reprocher.
    ══════════════════════════════════════════════════════════════════════════ */
 
 /** Identifiants stables : ils relient les entités entre elles dans le graphe. */
@@ -78,6 +83,39 @@ export const structuredData = {
         audienceType:
           "Officine de pharmacie : titulaire, adjoint, préparateur, apprenti",
         geographicArea: { "@type": "Country", name: "France" },
+      },
+      offers: {
+        "@type": "AggregateOffer",
+        priceCurrency: "EUR",
+        lowPrice: Math.min(...PLANS.map((plan) => plan.mensuel)),
+        highPrice: Math.max(...PLANS.map((plan) => plan.mensuel)),
+        offerCount: PLANS.length,
+        offers: PLANS.map((plan) => ({
+          "@type": "Offer",
+          name: plan.nom,
+          description: `${plan.equipe} · ${plan.stockage} · tous les modules inclus`,
+          category: "Abonnement par officine",
+          priceCurrency: "EUR",
+          price: plan.mensuel,
+          priceSpecification: [
+            {
+              "@type": "UnitPriceSpecification",
+              price: plan.mensuel,
+              priceCurrency: "EUR",
+              valueAddedTaxIncluded: false,
+              billingDuration: 1,
+              unitCode: "MON",
+            },
+            {
+              "@type": "UnitPriceSpecification",
+              price: tarif(plan, "annuel").parAn,
+              priceCurrency: "EUR",
+              valueAddedTaxIncluded: false,
+              billingDuration: 12,
+              unitCode: "MON",
+            },
+          ],
+        })),
       },
       /* Les 15 modules réels — pas « Formation », interdit de mise en avant. */
       featureList: [

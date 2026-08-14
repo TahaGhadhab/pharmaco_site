@@ -6,6 +6,8 @@ import { Plus } from "lucide-react";
 import { Section, SectionHeading } from "@/components/ui/primitives";
 import { Reveal } from "@/components/ui/reveal";
 import { ScreenFrame } from "@/components/ui/screen-frame";
+import { ScreenModeToggle } from "@/components/ui/screen-mode-toggle";
+import { useResolvedScreen } from "@/lib/screen-mode";
 import { screens, type ScreenSlot } from "@/lib/screens";
 import { cn } from "@/lib/utils";
 
@@ -81,6 +83,10 @@ function Carte({
   const reduced = useReducedMotion();
   const { eyebrow, title, description, slot } = feature;
 
+  /* La carte suit la capture : portrait étroit pour le téléphone, paysage large
+     pour l'ordinateur. Sinon le cadre desktop rentrerait dans 18 rem. */
+  const surTelephone = useResolvedScreen(slot).variant === "phone";
+
   return (
     <button
       type="button"
@@ -92,9 +98,14 @@ function Carte({
       aria-expanded={actif}
       className={cn(
         "group relative shrink-0 snap-start overflow-hidden text-left",
-        "h-[30rem] w-[18rem] sm:h-[33rem] sm:w-[19.5rem]",
+        surTelephone
+          ? "h-[30rem] w-[18rem] sm:h-[33rem] sm:w-[19.5rem]"
+          : "h-[26rem] w-[22rem] max-w-[88vw] sm:h-[28rem] sm:w-[30rem]",
         "rounded-sheet bg-primary-tint-2 ring-1 ring-line dark:bg-surface-muted",
-        "transition-[box-shadow,transform] duration-300 ease-(--ease-out-soft)",
+        /* 420 ms : le tempo du volet de la carte — et celui de la bascule
+           mobile / ordinateur, qui redimensionne le cadre à l'intérieur.
+           Les deux mouvements doivent se terminer ensemble. */
+        "transition-[box-shadow,transform,width,height] duration-[420ms] ease-(--ease-out-soft)",
         actif && "shadow-float",
       )}
     >
@@ -107,7 +118,11 @@ function Carte({
         transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
         className="relative flex justify-center px-4 pt-7 sm:px-5"
       >
-        <ScreenFrame slot={slot} className="max-w-[224px] sm:max-w-[248px]" />
+        <ScreenFrame
+          slot={slot}
+          phoneClassName="max-w-[224px] sm:max-w-[248px]"
+          desktopClassName="max-w-[300px] sm:max-w-[440px]"
+        />
       </motion.div>
 
       {/* Barre au repos : le seul texte visible tant qu'on ne survole pas. */}
@@ -157,11 +172,14 @@ export function Features() {
     <Section id="fonctionnalites" containerClassName="max-w-none px-0">
       <div className="mx-auto w-full max-w-(--container-page) px-4 sm:px-6">
         <Reveal>
-          <SectionHeading
-            eyebrow="Ce que fait l'application"
-            title="Quatre mécanismes. Vérifiables en dix minutes."
-            lead="Passez sur une capture pour savoir ce qu'elle fait."
-          />
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <SectionHeading
+              eyebrow="Ce que fait l'application"
+              title="Quatre mécanismes. Vérifiables en dix minutes."
+              lead="Passez sur une capture pour savoir ce qu'elle fait."
+            />
+            <ScreenModeToggle />
+          </div>
         </Reveal>
       </div>
 

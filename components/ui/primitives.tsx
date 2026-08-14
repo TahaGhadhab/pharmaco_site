@@ -111,8 +111,10 @@ const BUTTON_BASE =
   "active:translate-y-px disabled:pointer-events-none disabled:opacity-55";
 
 const BUTTON_VARIANTS: Record<ButtonVariant, string> = {
+  /* `primary-cta`, pas `primary` : le vert de marque ne donne que 3,49 sous du
+     texte blanc, sous le seuil AA. Le survol descend encore, il reste conforme. */
   primary:
-    "bg-primary text-white shadow-cta hover:bg-primary-strong hover:-translate-y-0.5 " +
+    "bg-primary-cta text-white shadow-cta hover:bg-primary-strong hover:-translate-y-0.5 " +
     "dark:text-[#06120c]",
   secondary:
     "bg-surface text-ink ring-1 ring-line shadow-card hover:bg-surface-muted hover:-translate-y-0.5",

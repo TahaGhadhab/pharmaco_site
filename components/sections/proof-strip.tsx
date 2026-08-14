@@ -2,6 +2,7 @@
 
 import { Check } from "lucide-react";
 import { LogoLoop, type LogoItem } from "@/components/ui/logo-loop";
+import { ESSAI_JOURS } from "@/lib/pricing";
 
 /**
  * Bandeau de réassurance, juste sous le hero — en boucle continue.
@@ -14,15 +15,16 @@ import { LogoLoop, type LogoItem } from "@/components/ui/logo-loop";
  *    ⛔ Ne jamais écrire « conforme RGPD » ni « certifié » : aucun audit réalisé.
  *  · « hébergement européen » — l'infrastructure est européenne (§8).
  *    ⛔ Ne pas préciser un pays sans vérification.
- *  · le premier mois offert et l'inscription sans paiement sont la décision
- *    commerciale actuelle du client.
+ *  · l'essai de 30 jours et l'inscription sans paiement sont la décision
+ *    commerciale actuelle du client. La durée vient de `lib/pricing.ts` :
+ *    elle ne s'écrit qu'à un seul endroit.
  */
 
 const MENTIONS = [
   { fort: "Conçu selon les principes du RGPD", suite: "hébergement européen" },
   { fort: "Complément de votre LGO", suite: "pas un remplaçant" },
   { fort: "Zéro installation", suite: "web et mobile" },
-  { fort: "Premier mois offert", suite: "sans carte bancaire" },
+  { fort: `${ESSAI_JOURS} jours d'essai gratuit`, suite: "sans carte bancaire" },
 ];
 
 type Mention = (typeof MENTIONS)[number];

@@ -52,6 +52,7 @@ export const site = {
     { label: "Le problème", href: "#probleme" },
     { label: "Ce que ça coûte", href: "#simulateur" },
     { label: "Fonctionnalités", href: "#fonctionnalites" },
+    { label: "Tarifs", href: "#tarifs" },
     { label: "Questions", href: "#faq" },
   ],
 } as const;

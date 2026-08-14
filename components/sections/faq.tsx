@@ -7,16 +7,25 @@ import Link from "next/link";
 import { JsonLd } from "@/components/ui/json-ld";
 import { Section, SectionHeading } from "@/components/ui/primitives";
 import { Reveal } from "@/components/ui/reveal";
+import { ESSAI_JOURS, PLANS, REMISE_ANNUELLE } from "@/lib/pricing";
 import { site } from "@/lib/site";
+import { eurosPrecis } from "@/lib/utils";
+
+/* Les montants ne sont jamais retapés : ils viennent de la grille. Une réponse
+   de FAQ qui contredit la section tarifs est une réponse fausse. */
+const MOINS_CHER = Math.min(...PLANS.map((plan) => plan.mensuel));
+const PLUS_CHER = Math.max(...PLANS.map((plan) => plan.mensuel));
+const REMISE = `${Math.round(REMISE_ANNUELLE * 100)} %`;
 
 /**
  * FAQ — §14 du contexte (réponses vérifiées) croisé avec le §6 de l'argumentaire
  * (traitement des objections).
  *
- * ⛔ Le modèle tarifaire annoncé (abonnement par officine, calculé sur la taille
- * de l'équipe · premier mois offert · inscription sans paiement) est la décision
- * commerciale du client, confirmée par lui. Ne pas afficher de montant tant
- * qu'aucun n'a été arrêté, et ne jamais écrire « remplace votre LGO ».
+ * Le modèle tarifaire (abonnement par officine, calculé sur la taille de
+ * l'équipe · 30 jours d'essai · inscription sans paiement) est la décision
+ * commerciale du client. Les montants sont arrêtés et vivent dans
+ * `lib/pricing.ts` : ne jamais en réécrire un ici, renvoyer vers #tarifs.
+ * ⛔ Ne jamais écrire « remplace votre LGO ».
  *
  * Le JSON-LD `FAQPage` est construit à partir du même tableau que l'affichage.
  */
@@ -38,7 +47,11 @@ const QUESTIONS: Question[] = [
   },
   {
     q: "Combien ça coûte ?",
-    r: "Un abonnement par officine, calculé sur la taille de votre équipe : pas de facturation à l'utilisateur, pas de module en supplément. Le premier mois est offert, et l'inscription ne demande aucun moyen de paiement. Le montant exact vous est présenté quand votre demande est validée.",
+    r: `Un abonnement par officine, calculé sur la taille de votre équipe : pas de facturation à l'utilisateur, pas de module en supplément. Trois formules, de ${eurosPrecis(MOINS_CHER)} à ${eurosPrecis(PLUS_CHER)} HT par mois, avec ${REMISE} de remise en engagement annuel. Les ${ESSAI_JOURS} premiers jours sont offerts et l'inscription ne demande aucun moyen de paiement.`,
+  },
+  {
+    q: "Qu'est-ce qui change d'une formule à l'autre ?",
+    r: "La taille de l'équipe et le volume de documents, rien d'autre. Les quinze modules sont dans les trois formules : aucune fonction n'est réservée à la formule du haut.",
   },
   {
     q: "Est-ce que mes confrères voient mes données ?",

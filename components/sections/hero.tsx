@@ -5,7 +5,8 @@ import { motion, useReducedMotion } from "motion/react";
 import { ArrowRight, PackageX, TriangleAlert } from "lucide-react";
 import { ButtonLink, Section, Tag } from "@/components/ui/primitives";
 import { Reveal } from "@/components/ui/reveal";
-import { PhoneFrame } from "@/components/ui/screen-frame";
+import { ScreenFrame } from "@/components/ui/screen-frame";
+import { useScreenMode } from "@/lib/screen-mode";
 import { screens } from "@/lib/screens";
 import { site } from "@/lib/site";
 import { cn } from "@/lib/utils";
@@ -57,6 +58,11 @@ function FloatingCard({
 }
 
 export function Hero() {
+  /* Le visuel suit l'interrupteur posé plus bas dans la page : mobile ou
+     ordinateur. La colonne s'élargit d'autant, et les deux fragments se
+     replacent — collés au cadre étroit, débordant du cadre large. */
+  const surTelephone = useScreenMode() === "phone";
+
   return (
     <Section
       tone="page"
@@ -130,15 +136,21 @@ export function Hero() {
           {/* 360 px : la capture n'étant plus rognée, le cadre suit ses
               proportions réelles et se raccourcit. On élargit d'autant pour que
               le téléphone garde la même présence dans la colonne. */}
-          <div className="relative w-full max-w-[360px]">
-            <PhoneFrame
+          <div
+            className={cn(
+              "relative w-full transition-[max-width] duration-[420ms] ease-(--ease-out-soft)",
+              surTelephone ? "max-w-[360px]" : "max-w-[560px]",
+            )}
+          >
+            <ScreenFrame
               slot={screens.accueil}
-              className="max-w-[360px] rotate-[-2.5deg]"
+              phoneClassName="max-w-[360px] rotate-[-2.5deg]"
+              desktopClassName="max-w-[560px] rotate-[-1.5deg]"
             />
 
             {/* Fragment 1 — compteur de ruptures */}
             <FloatingCard
-              className="-left-8 top-16"
+              className={surTelephone ? "-left-8 top-16" : "-left-10 top-8"}
               duration={5.4}
               distance={7}
             >
@@ -159,7 +171,10 @@ export function Hero() {
 
             {/* Fragment 2 — alerte ANSM (le médicament, jamais la présentation) */}
             <FloatingCard
-              className="-right-6 bottom-24 w-[13.5rem]"
+              className={cn(
+                "w-[13.5rem]",
+                surTelephone ? "-right-6 bottom-24" : "-right-8 -bottom-6",
+              )}
               duration={6}
               delay={0.8}
               distance={6}
