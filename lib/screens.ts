@@ -178,9 +178,6 @@ export const screens = {
       src: "/screens/desktop/commandes.webp",
       variant: "desktop",
       alt: "Commandes fournisseurs sur ordinateur : le fournisseur, les produits commandés, l'état de réception et la date.",
-      /* ⚠️ La capture livrée porte des libellés de test — « test1 », « testing »,
-         « med-prod1 ». Lisible, mais ça se voit. À rejouer avec de vrais noms
-         de présentations quand l'occasion se présente. */
       brief:
         "Commandes en cours sur ordinateur, avec une date de livraison attendue et de vrais libellés produit.",
     },
