@@ -8,6 +8,7 @@ import { Features } from "@/components/sections/features";
 import { Modules } from "@/components/sections/modules";
 import { Gallery } from "@/components/sections/gallery";
 import { Pricing } from "@/components/sections/pricing";
+import { Visio } from "@/components/sections/visio";
 import { Testimonials } from "@/components/sections/testimonials";
 import { FinalCta } from "@/components/sections/final-cta";
 import { Faq } from "@/components/sections/faq";
@@ -27,6 +28,9 @@ import { SiteFooter } from "@/components/sections/site-footer";
  * demande pas à un visiteur ce que ça coûte avant de lui avoir montré ce que
  * c'est. Il a déjà, grâce au simulateur, un ordre de grandeur en tête.
  *
+ * La demande de visio suit immédiatement les tarifs : c'est là que naît
+ * l'hésitation, et la réponse à l'hésitation est quelqu'un à qui parler.
+ *
  * La FAQ est volontairement **après** le CTA de clôture : le visiteur convaincu
  * part sur le bouton, celui qui hésite trouve ses réponses juste en dessous.
  */
@@ -44,6 +48,7 @@ export default function Home() {
         <Modules />
         <Features />
         <Pricing />
+        <Visio />
         <Testimonials />
         <FinalCta />
         <Faq />

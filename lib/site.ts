@@ -22,6 +22,59 @@ const APP =
  */
 export const SITE_URL = "https://www.pharmacowork.fr";
 
+/**
+ * Adresse de contact du service clients — **la seule**, et elle ne vit qu'ici.
+ * Les mentions légales, le JSON-LD, le pied de page et la demande de visio la
+ * lisent depuis cette constante : une adresse recopiée à la main est une
+ * adresse qu'on oublie de changer.
+ */
+export const EMAIL_CONTACT = "pharma.cowork@pharmacowork.fr";
+
+/**
+ * Motifs de visio proposés au visiteur.
+ *
+ * Aucun formulaire n'est branché sur la vitrine : la demande part en `mailto:`,
+ * objet et corps pré-remplis. Le visiteur n'a qu'à compléter et envoyer, et le
+ * service clients reçoit une demande déjà qualifiée.
+ *
+ * ⚠️ Ni durée ni délai de réponse ne sont annoncés : ce sont des engagements
+ * commerciaux, ils appartiennent au client, pas à la page.
+ */
+export type MotifVisio = "decouverte" | "priseEnMain";
+
+const OBJETS: Record<MotifVisio, string> = {
+  decouverte: "Demande de visio — découverte de PharmacoWork",
+  priseEnMain: "Demande de visio — initiation de l'équipe",
+};
+
+const CORPS: Record<MotifVisio, string> = {
+  decouverte:
+    "Bonjour,\n\n" +
+    "Nous souhaitons voir PharmacoWork en visio avant d'aller plus loin.\n\n" +
+    "Officine :\n" +
+    "Ville :\n" +
+    "Personne à joindre :\n" +
+    "Téléphone :\n" +
+    "Nos disponibilités :\n" +
+    "Ce qu'on aimerait voir en priorité :\n",
+  priseEnMain:
+    "Bonjour,\n\n" +
+    "Nous souhaitons une visio d'initiation au logiciel pour notre équipe.\n\n" +
+    "Officine :\n" +
+    "Ville :\n" +
+    "Personne à joindre :\n" +
+    "Téléphone :\n" +
+    "Nombre de personnes à former :\n" +
+    "Nos disponibilités :\n",
+};
+
+/** Lien `mailto:` d'une demande de visio, objet et corps encodés. */
+export function lienVisio(motif: MotifVisio) {
+  const objet = encodeURIComponent(OBJETS[motif]);
+  const corps = encodeURIComponent(CORPS[motif]);
+  return `mailto:${EMAIL_CONTACT}?subject=${objet}&body=${corps}`;
+}
+
 export const site = {
   name: "PharmacoWork",
   baseline: "L'espace de travail de votre officine",
@@ -38,7 +91,7 @@ export const site = {
     app: APP,
     inscription: `${APP}/inscription`,
     connexion: `${APP}/connexion`,
-    contact: "mailto:contact@pharmacowork.fr",
+    contact: `mailto:${EMAIL_CONTACT}`,
   },
 
   /** §10 : jamais « Essai gratuit », « S'inscrire », « Acheter », « Voir les tarifs ». */
@@ -53,6 +106,7 @@ export const site = {
     { label: "Ce que ça coûte", href: "#simulateur" },
     { label: "Fonctionnalités", href: "#fonctionnalites" },
     { label: "Tarifs", href: "#tarifs" },
+    { label: "Visio", href: "#visio" },
     { label: "Questions", href: "#faq" },
   ],
 } as const;

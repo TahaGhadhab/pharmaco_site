@@ -1,5 +1,5 @@
 import { PLANS, tarif } from "@/lib/pricing";
-import { SITE_URL, site } from "@/lib/site";
+import { EMAIL_CONTACT, SITE_URL, site } from "@/lib/site";
 
 /* ══════════════════════════════════════════════════════════════════════════
    Données structurées schema.org.
@@ -51,7 +51,7 @@ export const structuredData = {
         caption: "Logo PharmacoWork",
       },
       description: DESCRIPTION,
-      email: "contact@pharmacowork.fr",
+      email: EMAIL_CONTACT,
       areaServed: { "@type": "Country", name: "France" },
       knowsLanguage: "fr-FR",
     },

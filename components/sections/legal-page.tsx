@@ -4,6 +4,7 @@ import { SiteHeader } from "@/components/sections/site-header";
 import { SiteFooter } from "@/components/sections/site-footer";
 import { Eyebrow } from "@/components/ui/primitives";
 import { DERNIERE_REVISION } from "@/lib/legal";
+import { EMAIL_CONTACT } from "@/lib/site";
 
 /* ══════════════════════════════════════════════════════════════════════════
    Coquille des pages légales.
@@ -110,10 +111,10 @@ export function LegalIncomplet() {
           l&apos;immatriculation finalisée. Pour toute demande d&apos;ici là,
           écrivez à{" "}
           <a
-            href="mailto:contact@pharmacowork.fr"
+            href={`mailto:${EMAIL_CONTACT}`}
             className="font-medium text-primary-deep underline underline-offset-4 hover:text-primary-strong"
           >
-            contact@pharmacowork.fr
+            {EMAIL_CONTACT}
           </a>
           .
         </p>
