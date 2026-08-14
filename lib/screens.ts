@@ -96,7 +96,7 @@ export const screens = {
       id: "ruptures-desktop",
       src: "/screens/desktop/ruptures.webp",
       variant: "desktop",
-      alt: "Liste des ruptures sur ordinateur : portée, alternatives et alertes ANSM en colonnes.",
+      alt: "Liste des ruptures sur ordinateur : le produit, l'alternative proposée, la portée locale ou nationale, le statut et la date de signalement.",
       brief:
         "Liste des ruptures sur ordinateur, si possible avec une ligne portant une alerte ANSM.",
     },
@@ -177,9 +177,12 @@ export const screens = {
       id: "commandes-desktop",
       src: "/screens/desktop/commandes.webp",
       variant: "desktop",
-      alt: "Commandes fournisseurs sur ordinateur : liste des produits et date de livraison attendue.",
+      alt: "Commandes fournisseurs sur ordinateur : le fournisseur, les produits commandés, l'état de réception et la date.",
+      /* ⚠️ La capture livrée porte des libellés de test — « test1 », « testing »,
+         « med-prod1 ». Lisible, mais ça se voit. À rejouer avec de vrais noms
+         de présentations quand l'occasion se présente. */
       brief:
-        "Commandes en cours sur ordinateur, avec une date de livraison attendue.",
+        "Commandes en cours sur ordinateur, avec une date de livraison attendue et de vrais libellés produit.",
     },
   },
   gestionRh: {

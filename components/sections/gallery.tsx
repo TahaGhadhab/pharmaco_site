@@ -1,41 +1,33 @@
 "use client";
 
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  useSyncExternalStore,
-} from "react";
-import {
-  motion,
-  useReducedMotion,
-  useScroll,
-  useSpring,
-  useTransform,
-  type MotionValue,
-} from "motion/react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { Eyebrow, Section, SectionHeading } from "@/components/ui/primitives";
+import { Section, SectionHeading } from "@/components/ui/primitives";
 import { Reveal } from "@/components/ui/reveal";
 import { ScreenFrame } from "@/components/ui/screen-frame";
 import { ScreenModeToggle } from "@/components/ui/screen-mode-toggle";
-import { useResolvedScreen, useScreenMode } from "@/lib/screen-mode";
+import { useScreenMode } from "@/lib/screen-mode";
 import { screens, resolveScreen, type ScreenSlot } from "@/lib/screens";
 import { cn } from "@/lib/utils";
 
 /**
- * Le tour de l'application.
+ * Le tour de l'application — une bande horizontale, et rien d'autre.
  *
- * Sur grand écran, la section se « punaise » : le défilement vertical de la page
- * est converti en translation horizontale de la bande. Le mouvement passe par un
- * ressort — la piste continue une fraction de seconde après la molette, ce qui
- * donne l'inertie. Chaque écran dérive verticalement d'une amplitude propre :
- * la bande respire au lieu de glisser d'un bloc.
+ * ── Ce qui a été retiré, et pourquoi ──────────────────────────────────────
+ * Cette section était « punaisée » sur grand écran : le défilement vertical de
+ * la page était converti en translation horizontale de la bande, chaque écran
+ * dérivant en plus verticalement d'une amplitude propre. Sur le papier, une
+ * belle mécanique. À l'usage, deux défauts que le client a vus tout de suite :
  *
- * Sous 1024 px, ou quand `prefers-reduced-motion` est demandé, on retombe sur un
- * défilement horizontal natif avec accroche — le contenu reste intégralement
- * accessible, sans détournement du scroll. §11.
+ *  · le détournement du scroll fait sauter la page au moment où la section
+ *    s'accroche puis se décroche — on ne sait plus où l'on est ;
+ *  · la dérive verticale des écrans donne l'impression que la bande flotte,
+ *    ce qui empêche de comparer deux captures côte à côte.
+ *
+ * Reste le défilement natif, avec accroche et deux flèches. Le contenu est
+ * intégralement accessible, au doigt comme au clavier comme à la molette, et
+ * la page ne bouge que quand on la fait bouger. §11 : plus rien à neutraliser
+ * ici en `prefers-reduced-motion`, il n'y a plus de mouvement automatique.
  */
 
 const TOUR: { slot: ScreenSlot; caption: string }[] = [
@@ -50,161 +42,7 @@ const TOUR: { slot: ScreenSlot; caption: string }[] = [
 const NOMBRES = ["", "Un", "Deux", "Trois", "Quatre", "Cinq", "Six", "Sept"];
 const SOUS_TITRE = `${NOMBRES[TOUR.length] ?? TOUR.length} écrans, pris tels quels.`;
 
-/** Marge conservée à droite en fin de course, pour que le dernier écran respire. */
-const TAIL = 96;
-
-function useMediaQuery(query: string) {
-  return useSyncExternalStore(
-    useCallback(
-      (notify: () => void) => {
-        const mql = window.matchMedia(query);
-        mql.addEventListener("change", notify);
-        return () => mql.removeEventListener("change", notify);
-      },
-      [query],
-    ),
-    () => window.matchMedia(query).matches,
-    () => false, // rendu serveur : on part toujours du repli
-  );
-}
-
-const widthFor = (slot: ScreenSlot) =>
-  slot.variant === "phone" ? "w-[19rem]" : "w-[36rem]";
-
-/* ── Un écran de la bande ────────────────────────────────────────────────────
-   La dérive verticale est propre à chaque index : amplitude et sens alternent,
-   ce qui évite l'effet « tout bouge ensemble ».                               */
-
-function DriftingItem({
-  slot,
-  caption,
-  index,
-  progress,
-}: {
-  slot: ScreenSlot;
-  caption: string;
-  index: number;
-  progress: MotionValue<number>;
-}) {
-  const amplitude = (index % 2 === 0 ? 1 : -1) * (16 + (index % 3) * 9);
-  const y = useTransform(progress, [0, 1], [amplitude, -amplitude]);
-
-  /* La colonne est réservée par la capture réellement affichée : une vue
-     ordinateur occupe presque le double d'une vue mobile. */
-  const montre = useResolvedScreen(slot);
-
-  return (
-    <motion.figure
-      style={{ y }}
-      className={cn("flex shrink-0 flex-col gap-4", widthFor(montre))}
-    >
-      <ScreenFrame slot={slot} className="max-w-none" />
-      <figcaption className="flex items-baseline gap-2.5">
-        <span className="u-numeric text-[0.7rem] text-primary-deep">
-          {String(index + 1).padStart(2, "0")}
-        </span>
-        <span className="u-eyebrow text-ink-4">{caption}</span>
-      </figcaption>
-    </motion.figure>
-  );
-}
-
-/* ── Version punaisée, grand écran ───────────────────────────────────────── */
-
-function PinnedTour() {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
-  const [distance, setDistance] = useState(0);
-
-  /* Course horizontale = largeur de la piste moins la fenêtre. Remesurée au
-     redimensionnement et quand les captures se chargent (elles changent la hauteur,
-     pas la largeur, mais la police, elle, décale tout). */
-  useEffect(() => {
-    const measure = () => {
-      const track = trackRef.current;
-      if (!track) return;
-      setDistance(Math.max(0, track.scrollWidth - window.innerWidth + TAIL));
-    };
-
-    measure();
-    const observer = new ResizeObserver(measure);
-    if (trackRef.current) observer.observe(trackRef.current);
-    window.addEventListener("resize", measure);
-    document.fonts?.ready.then(measure);
-
-    return () => {
-      observer.disconnect();
-      window.removeEventListener("resize", measure);
-    };
-  }, []);
-
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end end"],
-  });
-
-  /* Le ressort est ce qui fait toute la fluidité : la piste rattrape la position
-     cible au lieu de la suivre au pixel. `restDelta` bas pour éviter le tremblement. */
-  const smooth = useSpring(scrollYProgress, {
-    stiffness: 90,
-    damping: 26,
-    mass: 0.35,
-    restDelta: 0.0005,
-  });
-
-  const x = useTransform(smooth, [0, 1], [0, -distance]);
-  const progressScale = useTransform(smooth, [0, 1], [0, 1]);
-
-  return (
-    <div
-      ref={sectionRef}
-      className="relative bg-page"
-      style={{ height: `calc(100vh + ${distance}px)` }}
-    >
-      <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden">
-        <div className="mx-auto flex w-full max-w-(--container-page) flex-wrap items-end justify-between gap-6 px-6">
-          <div>
-            <Eyebrow>Le tour de l&apos;application</Eyebrow>
-            <h2 className="mt-4 text-h2 font-semibold text-ink">
-              Regardez-la travailler.
-            </h2>
-          </div>
-          <ScreenModeToggle />
-        </div>
-
-        <motion.div
-          ref={trackRef}
-          style={{ x }}
-          className="mt-12 flex w-max items-start gap-8 px-6 will-change-transform lg:px-[max(1.5rem,calc((100vw-var(--container-page))/2))]"
-        >
-          {TOUR.map(({ slot, caption }, index) => (
-            <DriftingItem
-              key={slot.id}
-              slot={slot}
-              caption={caption}
-              index={index}
-              progress={smooth}
-            />
-          ))}
-        </motion.div>
-
-        {/* Jauge d'avancement — le seul repère dont on dispose une fois punaisé */}
-        <div className="mx-auto mt-12 w-full max-w-(--container-page) px-6">
-          <div className="h-px w-full overflow-hidden bg-line">
-            <motion.div
-              style={{ scaleX: progressScale }}
-              className="h-full w-full origin-left bg-primary"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ── Repli : défilement natif ────────────────────────────────────────────── */
-
-function ScrollableTour() {
+export function Gallery() {
   const trackRef = useRef<HTMLDivElement>(null);
   const [atStart, setAtStart] = useState(true);
   const [atEnd, setAtEnd] = useState(false);
@@ -221,11 +59,19 @@ function ScrollableTour() {
     sync();
     const el = trackRef.current;
     if (!el) return;
+
     el.addEventListener("scroll", sync, { passive: true });
     window.addEventListener("resize", sync);
+
+    /* Les captures mobile et ordinateur n'ont pas la même largeur : la piste
+       change de course à la bascule, et les flèches doivent le savoir. */
+    const observer = new ResizeObserver(sync);
+    observer.observe(el);
+
     return () => {
       el.removeEventListener("scroll", sync);
       window.removeEventListener("resize", sync);
+      observer.disconnect();
     };
   }, [sync]);
 
@@ -276,10 +122,12 @@ function ScrollableTour() {
         </Reveal>
       </div>
 
+      {/* `items-start` : les captures n'ont pas toutes la même hauteur, et une
+          bande alignée en haut se lit mieux qu'une bande centrée. */}
       <div
         ref={trackRef}
         className={cn(
-          "mt-12 flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth",
+          "mt-12 flex snap-x snap-mandatory items-start gap-6 overflow-x-auto scroll-smooth",
           "px-4 pb-4 sm:px-6",
           "[scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
         )}
@@ -306,11 +154,4 @@ function ScrollableTour() {
       </div>
     </Section>
   );
-}
-
-export function Gallery() {
-  const isWide = useMediaQuery("(min-width: 1024px)");
-  const reduced = useReducedMotion();
-
-  return isWide && !reduced ? <PinnedTour /> : <ScrollableTour />;
 }
