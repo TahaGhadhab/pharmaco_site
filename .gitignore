@@ -37,6 +37,11 @@ yarn-error.log*
 # Ne jamais les remettre dans public/ — tout y est servi publiquement.
 /.screens-prives
 
+# Originaux PNG fournis par le client, avant conversion en WebP.
+# Conservés hors dépôt : ils pèsent dix fois le poids des fichiers servis,
+# et seule la version convertie a besoin d'être déployée.
+/.screens-sources
+
 # vercel
 .vercel
 

@@ -65,7 +65,7 @@ export const screens = {
       id: "accueil-desktop",
       src: "/screens/desktop/accueil.webp",
       variant: "desktop",
-      alt: "Écran d'accueil sur ordinateur : compteurs de tâches, de ruptures ouvertes, de locations à rendre et d'ordonnances à servir, disposés en largeur.",
+      alt: "Écran d'accueil sur ordinateur : les quatre compteurs — tâches en cours, ruptures ouvertes, locations à rendre, ordonnances à servir — puis la carte de l'équipe avec les rôles en poste.",
       brief: "Accueil sur ordinateur — les quatre compteurs et la carte Équipe.",
     },
   },
@@ -80,7 +80,7 @@ export const screens = {
       id: "scan-desktop",
       src: "/screens/desktop/rupture-creation.webp",
       variant: "desktop",
-      alt: "Déclaration d'une rupture sur ordinateur : champ code-barres CIP et recherche par nom de présentation.",
+      alt: "Formulaire « Nouvelle rupture » sur ordinateur : champ médicament, code-barres CIP avec son bouton de scan, portée locale ou nationale, alternative suggérée.",
       brief:
         "Formulaire « Nouvelle rupture » sur ordinateur, champ CIP bien visible.",
     },
@@ -128,7 +128,7 @@ export const screens = {
       id: "planning-desktop",
       src: "/screens/desktop/planning.webp",
       variant: "desktop",
-      alt: "Planning d'équipe sur ordinateur : la semaine entière, créneaux et heures réelles par personne.",
+      alt: "Planning d'équipe sur ordinateur : la semaine en bandeau, un jour sélectionné, et pour chaque personne son créneau et son état de pointage.",
       brief:
         "Planning de la semaine sur ordinateur, une colonne par jour, heures de pointage lisibles.",
     },
@@ -157,7 +157,7 @@ export const screens = {
       id: "taches-desktop",
       src: "/screens/desktop/taches.webp",
       variant: "desktop",
-      alt: "Liste des tâches sur ordinateur : responsable, échéance et état en colonnes.",
+      alt: "Liste des tâches sur ordinateur : quatre colonnes — la tâche, son statut, son échéance et la personne à qui elle est assignée.",
       brief:
         "Tâches assignées sur ordinateur, avec échéance et responsable en colonnes.",
     },
@@ -202,7 +202,9 @@ export const screens = {
       id: "chat-desktop",
       src: "/screens/desktop/chat.webp",
       variant: "desktop",
-      alt: "Messagerie interne sur ordinateur : les canaux à gauche, la conversation à droite.",
+      alt: "Messagerie interne sur ordinateur : les conversations à gauche, le fil à droite, et le rappel de ne pas y partager de données patient.",
+      /* Livrée, mais le volet de droite est vide. Une capture avec une
+         conversation ouverte — sans contenu patient — serait plus parlante. */
       brief:
         "Canaux à gauche, conversation ouverte à droite. Aucun contenu patient à l'écran.",
     },
@@ -223,7 +225,7 @@ export const screens = {
       variant: "desktop",
       alt: "Enregistrement d'une ordonnance sur ordinateur : dépôt de la photo à gauche, formulaire encore vide à droite.",
       brief:
-        "Écran « Nouvelle ordonnance » sur ordinateur, formulaire vide — sans aucune donnée patient.",
+        "⚠️ À REPRENDRE — la version fournie le 14 août 2026 était la LISTE des ordonnances, avec quatre noms de patients en clair et le médicament associé à chacun. Un nom et un traitement sur la même ligne, c'est une donnée de santé nominative : §15, et RGPD par-dessus. Elle est dans .screens-prives/, hors dépôt. Rejouer sur le FORMULAIRE de création, vide, ou sur la liste avec des noms manifestement fictifs.",
     },
   },
 
@@ -248,7 +250,7 @@ export const screens = {
       id: "agenda-desktop",
       src: "/screens/desktop/agenda.webp",
       variant: "desktop",
-      alt: "Agenda agrégé sur ordinateur : tâches, livraisons et fins de location sur le mois.",
+      alt: "Agenda agrégé sur ordinateur : le mois en calendrier, des pastilles de couleur sur les jours qui portent une échéance, et les éléments sans date regroupés en dessous.",
       brief:
         "Agenda sur ordinateur, des lignes d'origines différentes le même jour.",
     },

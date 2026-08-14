@@ -31,9 +31,12 @@ const APP_HOST = site.urls.app.replace(/^https?:\/\//, "");
  * barre d'onglets étaient coupés. Le cadre desktop rognait pire encore (33 %).
  */
 
+/* Indications affichées dans le cadre de réservation. Le desktop suit le
+   cadrage réellement livré par le client — une fenêtre de ~1600 × 670, pas un
+   écran plein. Annoncer 1440 × 900 ferait recadrer pour rien. */
 const DIMENSIONS: Record<ScreenSlot["variant"], string> = {
   phone: "375 × 812",
-  desktop: "1440 × 900",
+  desktop: "1600 × 670",
 };
 
 /**
@@ -43,7 +46,7 @@ const DIMENSIONS: Record<ScreenSlot["variant"], string> = {
  */
 const PLACEHOLDER_ASPECT: Record<ScreenSlot["variant"], string> = {
   phone: "aspect-[375/812]",
-  desktop: "aspect-[1440/900]",
+  desktop: "aspect-[1600/670]",
 };
 
 function Placeholder({ slot }: { slot: ScreenSlot }) {
