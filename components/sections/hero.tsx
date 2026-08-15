@@ -172,8 +172,8 @@ export function Hero() {
               titre sur petit écran.
 
               À zéro, `estPublie` retire le bloc — même garde que la section
-              avis. Voir `lib/adherents.ts` : le chiffre est réel, daté, et ne
-              progresse jamais tout seul. */}
+              avis. Voir `lib/adherents.ts` : le chiffre est réel et ne progresse
+              jamais tout seul. */}
           {estPublie ? (
             <Reveal delay={0.24}>
               {/* Une plaque, pas deux lignes de texte. Elle emprunte son
@@ -203,11 +203,12 @@ export function Hero() {
                   <Parc valeur={ADHERENTS.membres} libelle="Membres actifs" />
                 </div>
 
-                {/* La date fait la différence entre un chiffre et une
-                    affirmation vérifiable. Elle vieillit exprès. */}
-                <p className="u-numeric relative border-t border-line px-4 py-2.5 text-[0.68rem] text-ink-4 sm:px-5">
-                  Relevé au {ADHERENTS.releve}
-                </p>
+                {/* Aucune date affichée, et c'est délibéré — voir
+                    `lib/adherents.ts`. Une date figée se périme ; une date qui
+                    suivrait l'horloge affirmerait chaque matin qu'un relevé a eu
+                    lieu ce matin-là, alors que le chiffre n'aurait pas bougé.
+                    Un décompte au présent n'affirme rien sur sa fraîcheur : il
+                    suffit qu'il soit vrai. */}
               </div>
             </Reveal>
           ) : null}

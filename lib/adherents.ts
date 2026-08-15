@@ -3,11 +3,12 @@
  *
  * ┌─ CE FICHIER PORTE UNE AFFIRMATION PUBLIQUE ───────────────────────────────┐
  * │ Ces nombres sont montrés à des titulaires pour les aider à décider. Ils    │
- * │ doivent donc être VRAIS au jour du relevé, et rien d'autre.                │
+ * │ doivent donc être VRAIS, au présent, et rien d'autre.                      │
  * │                                                                            │
  * │ Pour les mettre à jour : trois valeurs, ici, et nulle part ailleurs.       │
  * │ Le hero les lit, `estPublie` décide de l'affichage. Aucun autre fichier    │
- * │ ne retape un chiffre.                                                      │
+ * │ ne retape un chiffre. Pensez à avancer `verifieLe` en même temps — c'est   │
+ * │ lui qui déclenche l'avertissement de péremption.                           │
  * └────────────────────────────────────────────────────────────────────────────┘
  *
  * ── Levée du §15, 14 août 2026 ─────────────────────────────────────────────
@@ -37,20 +38,20 @@ export type Adherents = {
   /** Comptes utilisateurs actifs dans ces officines. */
   membres: number;
   /**
-   * Date d'arrêté du relevé, telle qu'elle s'écrit sur la page.
+   * Date de dernière vérification des deux nombres, au format `AAAA-MM-JJ`.
    *
-   * Un libellé, pas une date ISO : c'est la seule forme dont la page a besoin,
-   * et deux champs à recouper — l'ISO et son rendu — c'est un champ de trop.
-   * Elle est affichée : un chiffre daté est défendable, un chiffre nu ne l'est
-   * pas, et la date force la mise à jour quand elle vieillit.
+   * ⛔ **Ne s'affiche pas, et ne doit pas s'afficher.** C'est une trace de
+   * tenue, pas une mention pour le visiteur — voir la note « Pourquoi aucune
+   * date sur la page » plus bas. Elle sert uniquement à l'avertissement de
+   * péremption ci-dessous.
    */
-  releve: string;
+  verifieLe: string;
 };
 
 export const ADHERENTS: Adherents = {
   officines: 7,
   membres: 43,
-  releve: "14 août 2026",
+  verifieLe: "2026-08-14",
 };
 
 /**
@@ -61,6 +62,58 @@ export const ADHERENTS: Adherents = {
  * la page, sans toucher au hero.
  */
 export const estPublie = ADHERENTS.officines > 0 && ADHERENTS.membres > 0;
+
+/* ── Pourquoi aucune date sur la page ──────────────────────────────────────
+   La première version affichait « Relevé au 14 août 2026 ». Deux défauts, et
+   ils sont opposés :
+
+     · figée, la mention se périme et donne à voir un chiffre visiblement vieux ;
+     · calée sur l'horloge, elle affirmerait chaque matin qu'un relevé a eu lieu
+       ce matin-là. Le nombre, lui, n'aurait pas bougé. C'est fabriquer de la
+       fraîcheur — le même défaut que l'incrément aléatoire, déplacé sur l'axe
+       de la date, et le même article L121-2.
+
+   Un décompte au présent — « 7 officines actives » — n'affirme rien sur sa
+   fraîcheur. Il demande seulement à être vrai. La page n'affiche donc pas de
+   date, et `verifieLe` reste une trace interne.
+
+   Une seule façon honnête de faire suivre la date à l'horloge : que le nombre
+   soit relu en même temps. C'est la bascule décrite en fin de fichier — la date
+   devient alors celle de la régénération, et elle est vraie parce que le chiffre
+   vient d'être lu.                                                            */
+
+/** Jours écoulés depuis la dernière vérification. */
+function joursDepuisVerification() {
+  const verifie = Date.parse(`${ADHERENTS.verifieLe}T00:00:00Z`);
+  if (Number.isNaN(verifie)) return Number.POSITIVE_INFINITY;
+  return Math.floor((Date.now() - verifie) / 86_400_000);
+}
+
+/** Au-delà, le chiffre est présumé décroché du réel. */
+const PEREMPTION_JOURS = 90;
+
+/* Le garde-fou qui remplace la date affichée.
+   Puisque le visiteur ne voit plus quand le relevé a été fait, plus rien ne
+   signalerait un chiffre oublié. L'avertissement le signale à qui peut le
+   corriger.
+
+   ⚠️ En développement seulement, et le garde n'est pas décoratif : ce module est
+   importé par `hero.tsx`, qui est un composant client. Il part donc dans le
+   paquet du navigateur, et sans ce garde la relance atterrirait dans la console
+   des visiteurs. `next build` fixant `NODE_ENV` à `production`, l'avertissement
+   ne sort pas non plus au build — il apparaît au `next dev`, c'est-à-dire là où
+   quelqu'un travaille sur la page et peut agir. */
+if (process.env.NODE_ENV !== "production" && estPublie) {
+  const jours = joursDepuisVerification();
+  if (jours > PEREMPTION_JOURS) {
+    console.warn(
+      `[adherents] Le parc affiché (${ADHERENTS.officines} officines, ` +
+        `${ADHERENTS.membres} membres) n'a pas été vérifié depuis ${jours} jours. ` +
+        `Confirmez-le auprès du client et mettez à jour lib/adherents.ts, ` +
+        `ou remettez officines à 0 pour retirer le bloc de la page.`,
+    );
+  }
+}
 
 /* ── Pour que le compteur monte sans intervention ───────────────────────────
    La page est entièrement statique aujourd'hui (toutes les routes sortent en

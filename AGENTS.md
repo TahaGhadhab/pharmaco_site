@@ -66,14 +66,20 @@ prévu. Les deux existent désormais.
 **Compteur d'officines — l'interdiction est levée (14 août 2026).** Elle tenait au
 motif « rien de tel n'existe encore » (§16 du contexte). Le client atteste d'un parc
 réel : **7 officines, 43 membres actifs**. Le compteur vit dans `lib/adherents.ts` et
-**nulle part ailleurs** — trois valeurs, dont la date du relevé, qui s'affiche.
-Le hero les lit, `estPublie` masque le bloc si le parc retombe à zéro.
+**nulle part ailleurs** — trois valeurs. Le hero les lit, `estPublie` masque le bloc
+si le parc retombe à zéro.
 
 ⛔ **Aucune progression automatique, jamais.** Ni `Math.random()`, ni incrément au
 calendrier. Un compteur qui monte tout seul décrit en quelques semaines un parc que
 personne n'a signé, et il ne peut que le surestimer : c'est l'art. L121-2 C. conso,
 celui des faux avis. Pour qu'il monte sans intervention, il faut une source réelle —
 la marche à suivre est en fin de `lib/adherents.ts`.
+
+⛔ **Aucune date affichée non plus.** Figée elle se périme ; calée sur l'horloge elle
+affirme chaque matin un relevé qui n'a pas eu lieu, pour un chiffre qui n'a pas bougé
+— c'est le même article. Un décompte au présent n'affirme rien sur sa fraîcheur.
+`verifieLe` est une trace interne : elle déclenche un avertissement en développement
+au-delà de 90 jours, et ne sort jamais dans la page.
 
 **Témoignages :** section prête dans `components/sections/testimonials.tsx`, masquée
 tant qu'aucun verbatim réel n'est saisi. Un avis fabriqué est une pratique commerciale
