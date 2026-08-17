@@ -44,12 +44,34 @@ export const structuredData = {
       "@type": "Organization",
       "@id": ID_ORGANISATION,
       name: site.name,
+      /**
+       * Les graphies du nom.
+       *
+       * Interrogés sur « PharmacoWork », plusieurs assistants répondaient sur
+       * « Pharma Work » — un autre produit, rapproché au son. Déclarer les
+       * variantes réelles donne de quoi trancher ; `/llms.txt` dit en toutes
+       * lettres celles qui n'en sont pas.
+       */
+      alternateName: ["Pharmaco Work", "pharmacowork", "pharmacowork.fr"],
       url: SITE_URL,
+      /**
+       * Un PNG, pas le SVG — et des dimensions déclarées.
+       *
+       * Google accepte le SVG pour un logo d'`Organization`, et `/icon.svg`
+       * répond bien : ce n'était pas cassé. Mais le matriciel reste ce que sa
+       * chaîne de traitement d'images avale le plus sûrement, et `width`/`height`
+       * lui évitent d'avoir à télécharger le fichier pour connaître la taille.
+       * Le PNG est généré depuis le même SVG par `scripts/generer-icones.mjs` —
+       * une seule source de dessin, deux formats de sortie.
+       */
       logo: {
         "@type": "ImageObject",
-        url: `${SITE_URL}/icon.svg`,
+        url: `${SITE_URL}/logo-pharmacowork.png`,
+        width: 512,
+        height: 512,
         caption: "Logo PharmacoWork",
       },
+      slogan: site.slogan,
       description: DESCRIPTION,
       email: EMAIL_CONTACT,
       areaServed: { "@type": "Country", name: "France" },

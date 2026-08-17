@@ -148,6 +148,29 @@ Le cadre s'adapte aux proportions de la capture et l'affiche entière — ne jam
 lui réimposer un `aspect-[…]` ni un `object-cover`, ce serait rogner l'image.
 Seule la largeur se règle à l'appel (`className="max-w-[…]"`).
 
+## Icônes et référencement
+
+`app/icon.svg` est **la** source du logo. Les déclinaisons matricielles —
+`app/favicon.ico` (16/32/48), `app/apple-icon.png` (180), et
+`public/logo-pharmacowork.png` (512, celui du JSON-LD) — sont produites par
+`node scripts/generer-icones.mjs`. Le logo change → on relance le script, on ne
+redessine rien à la main.
+
+⚠️ **Ne jamais retirer `app/favicon.ico`.** C'est lui qui fait répondre
+`/favicon.ico` — l'URL que les collecteurs de favicons interrogent en repli, et
+qui renvoyait 404. Sans elle, le résultat Google reste au globe générique, quoi
+que déclare le `<link>` de la page. Le jeton que Next colle aux URL d'icônes
+(`/icon.svg?icon.<jeton>`) dérive du contenu et ne change pas d'un build à
+l'autre : ce n'est pas un problème, ne pas chercher à le supprimer.
+
+`/llms.txt` — la fiche que lisent les assistants — est **généré** par
+`app/llms.txt/route.ts` depuis `lib/pricing.ts`, `lib/adherents.ts` et
+`lib/site.ts`. Ne jamais le recréer en statique dans `public/` : d'une part le
+fichier statique masquerait la route, d'autre part c'est exactement ce qui
+l'avait laissé dériver (adresse de contact morte, « aucun tarif public arrêté »
+trois mois après l'arrêt de la grille). Les §15 s'y appliquent comme au reste de
+la page : c'est de la copy publique.
+
 ## Motion
 
 Animé, mais jamais gratuit — le §11 impose le respect de `prefers-reduced-motion`,
