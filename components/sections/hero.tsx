@@ -230,13 +230,14 @@ export function Hero() {
             <div className="size-[26rem] max-w-full rounded-pill bg-primary/10 blur-3xl" />
           </div>
 
-          {/* 360 px : la capture n'étant plus rognée, le cadre suit ses
-              proportions réelles et se raccourcit. On élargit d'autant pour que
-              le téléphone garde la même présence dans la colonne. */}
+          {/* La capture accueil.webp ne fait que 325 px de large : au-delà,
+              le cadre l'agrandit et la netteté s'en va. On plafonne donc à sa
+              résolution native plutôt qu'à la largeur qu'on voudrait lui
+              donner visuellement. */}
           <div
             className={cn(
               "relative w-full transition-[max-width] duration-[420ms] ease-(--ease-out-soft)",
-              surTelephone ? "max-w-[360px]" : "max-w-[560px]",
+              surTelephone ? "max-w-[320px]" : "max-w-[560px]",
             )}
           >
             {/* L'inclinaison n'existe qu'à partir de `sm`. Sous 640 px, le cadre
@@ -246,7 +247,7 @@ export function Hero() {
                 téléphone coupé net. Droit, il entre entier. */}
             <ScreenFrame
               slot={screens.accueil}
-              phoneClassName="max-w-[360px] sm:rotate-[-2.5deg]"
+              phoneClassName="max-w-[320px] sm:rotate-[-2.5deg]"
               desktopClassName="max-w-[560px] sm:rotate-[-1.5deg]"
             />
 
