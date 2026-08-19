@@ -120,10 +120,18 @@ function Carte({
   masque?: boolean;
 }) {
   return (
+    /* Hauteur fixe plutôt que `h-full` + stretch : dans une piste dont le
+       conteneur n'a lui-même pas de hauteur définie (il se dimensionne à son
+       contenu), le stretch flex ne s'applique pas — chaque carte reprenait sa
+       propre hauteur de contenu et Thomas Morel (une phrase) se retrouvait à
+       229 px contre 375 px pour Patrick Bellil (mesuré). Fixer la hauteur
+       tranche net ; centrer la citation dans l'espace qui reste absorbe
+       l'écart entre une citation d'une ligne et une de cinq sans laisser de
+       vide qui pousserait juste l'avatar plus bas. */
     <figure
       aria-hidden={masque}
       className={cn(
-        "flex h-full w-[19rem] shrink-0 flex-col gap-6 rounded-card bg-surface p-7 shadow-card ring-1 ring-line sm:w-[21rem]",
+        "flex h-[24rem] w-[19rem] shrink-0 flex-col gap-6 rounded-card bg-surface p-7 shadow-card ring-1 ring-line sm:h-[22rem] sm:w-[21rem]",
         masque && "motion-reduce:hidden",
       )}
     >
@@ -134,11 +142,13 @@ function Carte({
         aria-hidden
       />
 
-      <blockquote className="text-[1.02rem] leading-relaxed text-ink">
-        <Citation citation={t.citation} fort={t.fort} />
+      <blockquote className="flex flex-1 items-center text-[1.02rem] leading-relaxed text-ink">
+        <span>
+          <Citation citation={t.citation} fort={t.fort} />
+        </span>
       </blockquote>
 
-      <figcaption className="mt-auto flex items-center gap-3">
+      <figcaption className="flex shrink-0 items-center gap-3">
         <Avatar nom={t.citation} initiales={t.initiales} photo={t.photo} />
         <span className="block">
           <span className="block text-[0.92rem] font-semibold text-ink">
