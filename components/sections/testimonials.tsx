@@ -1,7 +1,8 @@
 import { Quote } from "lucide-react";
 import { Eyebrow, Section } from "@/components/ui/primitives";
 import { Avatar } from "@/components/ui/avatar";
-import { Reveal, RevealGroup, RevealItem } from "@/components/ui/reveal";
+import { Reveal } from "@/components/ui/reveal";
+import { cn } from "@/lib/utils";
 
 /**
  * ═══════════════════════════════════════════════════════════════════════════
@@ -109,9 +110,23 @@ function Citation({ citation, fort }: Pick<Temoignage, "citation" | "fort">) {
   );
 }
 
-function Carte({ t }: { t: Temoignage }) {
+function Carte({
+  t,
+  masque,
+}: {
+  t: Temoignage;
+  /** Le second passage de la boucle — un doublon visuel, invisible au lecteur
+      d'écran et retiré du DOM visuel quand l'animation l'est aussi. */
+  masque?: boolean;
+}) {
   return (
-    <figure className="flex h-full flex-col gap-6 rounded-card bg-surface p-7 shadow-card ring-1 ring-line">
+    <figure
+      aria-hidden={masque}
+      className={cn(
+        "flex h-full w-[19rem] shrink-0 flex-col gap-6 rounded-card bg-surface p-7 shadow-card ring-1 ring-line sm:w-[21rem]",
+        masque && "motion-reduce:hidden",
+      )}
+    >
       <Quote
         className="size-7 shrink-0 text-primary-tint"
         fill="currentColor"
@@ -140,21 +155,51 @@ export function Testimonials() {
   if (TEMOIGNAGES.length === 0) return null;
 
   return (
-    <Section id="avis" tone="surface">
-      <Reveal className="mx-auto max-w-[38rem] text-center">
-        <Eyebrow className="flex justify-center">Retours d’officines</Eyebrow>
-        <h2 className="mt-5 text-h2 font-semibold text-ink">
-          Ce que ça change, vu du comptoir.
-        </h2>
-      </Reveal>
+    <Section id="avis" tone="surface" containerClassName="max-w-none px-0">
+      <div className="mx-auto w-full max-w-(--container-page) px-4 sm:px-6">
+        <Reveal className="mx-auto max-w-[38rem] text-center">
+          <Eyebrow className="flex justify-center">Retours d’officines</Eyebrow>
+          <h2 className="mt-5 text-h2 font-semibold text-ink">
+            Ce que ça change, vu du comptoir.
+          </h2>
+        </Reveal>
+      </div>
 
-      <RevealGroup className="mt-12 grid items-stretch gap-6 lg:mt-16 lg:grid-cols-3">
-        {TEMOIGNAGES.map((t) => (
-          <RevealItem key={t.personne} className="h-full">
-            <Carte t={t} />
-          </RevealItem>
-        ))}
-      </RevealGroup>
+      {/* ── Défilement continu, sur mobile comme sur ordinateur ──────────────
+          `--animate-marquee` (globals.css) glisse la piste de 0 à -50 % : les
+          cartes sont doublées, la seconde moitié reprend exactement la
+          première, la boucle ne laisse voir aucune coupure. Survol → pause,
+          pour laisser le temps de lire.
+
+          `motion-reduce:` (§11) plutôt qu'un test JS : un hook client aurait
+          dû décider dès le premier rendu si l'utilisateur préfère un
+          affichage sans mouvement, et ce rendu serveur ne peut pas le savoir
+          — un branchement JSX sur cette valeur désynchronise le HTML du
+          serveur de celui du client à l'hydratation. La media query, elle,
+          est résolue par le navigateur : la piste s'immobilise, redevient une
+          bande qu'on fait défiler soi-même avec un point d'accroche par
+          carte, et son doublon — qui n'aurait servi qu'à la boucle —
+          disparaît. Le contenu reste entièrement lisible ; seul le mouvement
+          automatique s'efface. */}
+      <Reveal delay={0.1} className="mt-12 lg:mt-16">
+        <div
+          className={cn(
+            "group relative overflow-x-hidden",
+            "motion-reduce:overflow-x-auto motion-reduce:scroll-smooth motion-reduce:px-4 motion-reduce:pb-2 motion-reduce:scroll-pl-4 sm:motion-reduce:px-6 sm:motion-reduce:scroll-pl-6",
+            "[mask-image:linear-gradient(to_right,transparent,black_6%,black_94%,transparent)] motion-reduce:[mask-image:none]",
+            "[scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+          )}
+        >
+          <div className="flex w-max animate-(--animate-marquee) gap-5 group-hover:[animation-play-state:paused] motion-reduce:animate-none motion-reduce:snap-x motion-reduce:snap-mandatory">
+            {TEMOIGNAGES.map((t) => (
+              <Carte key={t.personne} t={t} />
+            ))}
+            {TEMOIGNAGES.map((t) => (
+              <Carte key={`${t.personne}-bis`} t={t} masque />
+            ))}
+          </div>
+        </div>
+      </Reveal>
     </Section>
   );
 }
