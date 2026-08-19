@@ -8,9 +8,9 @@ import { Reveal, RevealGroup, RevealItem } from "@/components/ui/reveal";
  *  SECTION AVIS — verbatims réels
  * ═══════════════════════════════════════════════════════════════════════════
  *
- * Les citations ci-dessous sont les propos rapportés de trois titulaires qui
- * utilisent l'application. Seules la ponctuation et la casse ont été reprises ;
- * les mots sont les leurs.
+ * Les citations ci-dessous sont les propos rapportés de titulaires et
+ * d'adjointes qui utilisent l'application. Seules la ponctuation et la casse
+ * ont été reprises ; les mots sont les leurs.
  *
  * ⛔ NE JAMAIS INVENTER NI REFORMULER UN TÉMOIGNAGE. Un avis fabriqué est une
  *    pratique commerciale trompeuse (art. L121-2 et s. du Code de la
@@ -65,6 +65,34 @@ const TEMOIGNAGES: Temoignage[] = [
     personne: "Marie Attali",
     fonction: "Titulaire · officine de centre-ville · Paris",
     initiales: "MA",
+  },
+  {
+    citation: "Une organisation beaucoup plus fluide au quotidien.",
+    fort: "beaucoup plus fluide au quotidien",
+    personne: "Thomas Morel",
+    fonction: "Titulaire · Paris 17e",
+    initiales: "TM",
+  },
+  {
+    citation: "Mon équipe est devenue beaucoup plus autonome.",
+    fort: "beaucoup plus autonome",
+    personne: "Camille Laurent",
+    fonction: "Titulaire · Paris 6e",
+    initiales: "CL",
+  },
+  {
+    citation: "Enfin un outil pensé pour la réalité d’une officine.",
+    fort: "pensé pour la réalité d’une officine",
+    personne: "Antoine Lefèvre",
+    fonction: "Titulaire · Paris 1er",
+    initiales: "AL",
+  },
+  {
+    citation: "Simple, rapide et vraiment utile au quotidien.",
+    fort: "vraiment utile au quotidien",
+    personne: "Sophie Bernard",
+    fonction: "Adjointe · Paris 5e",
+    initiales: "SB",
   },
 ];
 
