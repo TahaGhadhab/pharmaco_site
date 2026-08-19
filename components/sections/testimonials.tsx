@@ -1,4 +1,8 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import { Quote } from "lucide-react";
+import { motion, useAnimationFrame, useMotionValue } from "motion/react";
 import { Eyebrow, Section } from "@/components/ui/primitives";
 import { Avatar } from "@/components/ui/avatar";
 import { Reveal } from "@/components/ui/reveal";
@@ -161,6 +165,92 @@ function Carte({
   );
 }
 
+/* Vitesse de croisière du défilement, en pixels/seconde. */
+const VITESSE = 62;
+
+/**
+ * Piste défilante — pilotée en JS plutôt qu'en CSS `@keyframes`.
+ *
+ * Un `animation-play-state: paused` s'arrête net, à la frame près : c'est ce
+ * qu'on avait, et ce n'est pas ce qu'on veut. Ici la vitesse elle-même est une
+ * valeur qui glisse vers sa cible (0 au survol ou au doigt posé, `VITESSE`
+ * sinon) à chaque frame — un simple lissage exponentiel, indépendant du
+ * framerate. Résultat : on décélère jusqu'à l'arrêt, on réaccélère à la
+ * relâche, jamais un à-coup.
+ *
+ * `onPointerEnter`/`onPointerLeave` couvrent aussi bien le survol souris que
+ * le doigt posé sur un écran tactile — Chrome et Firefox les déclenchent pour
+ * les deux types de pointeur. `onPointerDown`/`onPointerUp` en secours,
+ * au cas où un navigateur ne suivrait pas un doigt qui reste immobile.
+ *
+ * Ne tourne que si l'utilisateur accepte le mouvement (§11) : la préférence
+ * est lue dans un effet, jamais pendant le rendu — un hook qui déciderait de
+ * la sortie JSX elle-même désynchroniserait le HTML du serveur de celui du
+ * client à l'hydratation (déjà rencontré sur cette section). Piste immobile,
+ * `motion-reduce:` bascule le conteneur sur un défilement manuel classique.
+ */
+function PisteAvis() {
+  const pisteRef = useRef<HTMLDivElement>(null);
+  const x = useMotionValue(0);
+  const vitesseActuelle = useRef(0);
+  const [survole, setSurvole] = useState(false);
+  const [actif, setActif] = useState(false);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setActif(false);
+      return;
+    }
+    setActif(true);
+  }, []);
+
+  useAnimationFrame((_t, delta) => {
+    if (!actif || !pisteRef.current) return;
+
+    const cible = survole ? 0 : VITESSE;
+    const lissage = 1 - Math.exp(-delta / 220);
+    vitesseActuelle.current += (cible - vitesseActuelle.current) * lissage;
+
+    const demiLargeur = pisteRef.current.scrollWidth / 2;
+    if (demiLargeur === 0) return;
+
+    let prochain = x.get() - vitesseActuelle.current * (delta / 1000);
+    if (prochain <= -demiLargeur) prochain += demiLargeur;
+    x.set(prochain);
+  });
+
+  const surPointeur = (dedans: boolean) => setSurvole(dedans);
+
+  return (
+    <div
+      className={cn(
+        "relative overflow-x-hidden",
+        "motion-reduce:overflow-x-auto motion-reduce:scroll-smooth motion-reduce:px-4 motion-reduce:pb-2 motion-reduce:scroll-pl-4 sm:motion-reduce:px-6 sm:motion-reduce:scroll-pl-6",
+        "[mask-image:linear-gradient(to_right,transparent,black_6%,black_94%,transparent)] motion-reduce:[mask-image:none]",
+        "[scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+      )}
+      onPointerEnter={() => surPointeur(true)}
+      onPointerLeave={() => surPointeur(false)}
+      onPointerDown={() => surPointeur(true)}
+      onPointerUp={() => surPointeur(false)}
+      onPointerCancel={() => surPointeur(false)}
+    >
+      <motion.div
+        ref={pisteRef}
+        style={{ x }}
+        className="flex w-max gap-5 motion-reduce:snap-x motion-reduce:snap-mandatory"
+      >
+        {TEMOIGNAGES.map((t) => (
+          <Carte key={t.personne} t={t} />
+        ))}
+        {TEMOIGNAGES.map((t) => (
+          <Carte key={`${t.personne}-bis`} t={t} masque />
+        ))}
+      </motion.div>
+    </div>
+  );
+}
+
 export function Testimonials() {
   if (TEMOIGNAGES.length === 0) return null;
 
@@ -175,40 +265,8 @@ export function Testimonials() {
         </Reveal>
       </div>
 
-      {/* ── Défilement continu, sur mobile comme sur ordinateur ──────────────
-          `--animate-marquee` (globals.css) glisse la piste de 0 à -50 % : les
-          cartes sont doublées, la seconde moitié reprend exactement la
-          première, la boucle ne laisse voir aucune coupure. Survol → pause,
-          pour laisser le temps de lire.
-
-          `motion-reduce:` (§11) plutôt qu'un test JS : un hook client aurait
-          dû décider dès le premier rendu si l'utilisateur préfère un
-          affichage sans mouvement, et ce rendu serveur ne peut pas le savoir
-          — un branchement JSX sur cette valeur désynchronise le HTML du
-          serveur de celui du client à l'hydratation. La media query, elle,
-          est résolue par le navigateur : la piste s'immobilise, redevient une
-          bande qu'on fait défiler soi-même avec un point d'accroche par
-          carte, et son doublon — qui n'aurait servi qu'à la boucle —
-          disparaît. Le contenu reste entièrement lisible ; seul le mouvement
-          automatique s'efface. */}
       <Reveal delay={0.1} className="mt-12 lg:mt-16">
-        <div
-          className={cn(
-            "group relative overflow-x-hidden",
-            "motion-reduce:overflow-x-auto motion-reduce:scroll-smooth motion-reduce:px-4 motion-reduce:pb-2 motion-reduce:scroll-pl-4 sm:motion-reduce:px-6 sm:motion-reduce:scroll-pl-6",
-            "[mask-image:linear-gradient(to_right,transparent,black_6%,black_94%,transparent)] motion-reduce:[mask-image:none]",
-            "[scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
-          )}
-        >
-          <div className="flex w-max animate-(--animate-marquee) gap-5 group-hover:[animation-play-state:paused] motion-reduce:animate-none motion-reduce:snap-x motion-reduce:snap-mandatory">
-            {TEMOIGNAGES.map((t) => (
-              <Carte key={t.personne} t={t} />
-            ))}
-            {TEMOIGNAGES.map((t) => (
-              <Carte key={`${t.personne}-bis`} t={t} masque />
-            ))}
-          </div>
-        </div>
+        <PisteAvis />
       </Reveal>
     </Section>
   );
