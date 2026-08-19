@@ -49,8 +49,11 @@ function FloatingCard({
           ? undefined
           : { duration, delay, repeat: Infinity, ease: "easeInOut" }
       }
+      /* Visibles dès le plus petit écran désormais — un peu plus compactes
+         (padding et rayon réduits) pour ne pas peser sur un cadre de 320 px.
+         `sm:` retrouve la taille d'origine, pensée pour la place en plus. */
       className={cn(
-        "absolute z-10 hidden rounded-card bg-surface/95 p-3 shadow-float ring-1 ring-line backdrop-blur-sm sm:block",
+        "absolute z-10 rounded-[0.7rem] bg-surface/95 p-2 shadow-float ring-1 ring-line backdrop-blur-sm sm:rounded-card sm:p-3",
         className,
       )}
     >
@@ -251,41 +254,56 @@ export function Hero() {
               desktopClassName="max-w-[560px] sm:rotate-[-1.5deg]"
             />
 
-            {/* Fragment 1 — compteur de ruptures */}
+            {/* Fragment 1 — compteur de ruptures.
+                Décalage réduit sous `sm` : le cadre ne fait que 320 px et la
+                colonne mobile n'a qu'une dizaine de pixels de marge de chaque
+                côté — un débord de -8 (32 px) sortait de l'écran. -3 (12 px)
+                reste lisible sans jamais toucher le bord du viewport. */}
             <FloatingCard
-              className={surTelephone ? "-left-8 top-16" : "-left-10 top-8"}
+              className={
+                surTelephone
+                  ? "-left-3 top-14 sm:-left-8 sm:top-16"
+                  : "-left-4 top-6 sm:-left-10 sm:top-8"
+              }
               duration={5.4}
               distance={7}
             >
-              <div className="flex items-center gap-2.5">
-                <span className="flex size-8 shrink-0 items-center justify-center rounded-pill bg-danger-tint text-danger">
-                  <PackageX className="size-4" strokeWidth={1.75} aria-hidden />
+              <div className="flex items-center gap-2 sm:gap-2.5">
+                <span className="flex size-7 shrink-0 items-center justify-center rounded-pill bg-danger-tint text-danger sm:size-8">
+                  <PackageX
+                    className="size-3.5 sm:size-4"
+                    strokeWidth={1.75}
+                    aria-hidden
+                  />
                 </span>
                 <span className="block">
-                  <span className="u-numeric block text-[1.05rem] font-semibold leading-none text-ink">
-                    3
+                  <span className="u-numeric block text-[0.95rem] font-semibold leading-none text-ink sm:text-[1.05rem]">
+                    4
                   </span>
-                  <span className="mt-1 block text-[0.72rem] leading-none text-ink-3">
+                  <span className="mt-1 block text-[0.68rem] leading-none text-ink-3 sm:text-[0.72rem]">
                     ruptures ouvertes
                   </span>
                 </span>
               </div>
             </FloatingCard>
 
-            {/* Fragment 2 — alerte ANSM (le médicament, jamais la présentation) */}
+            {/* Fragment 2 — alerte ANSM (le médicament, jamais la présentation).
+                Même logique : plaque rétrécie et décalage court sous `sm`. */}
             <FloatingCard
               className={cn(
-                "w-[13.5rem]",
-                surTelephone ? "-right-6 bottom-24" : "-right-8 -bottom-6",
+                "w-[10.5rem] sm:w-[13.5rem]",
+                surTelephone
+                  ? "-right-2 bottom-20 sm:-right-6 sm:bottom-24"
+                  : "-right-2 -bottom-2 sm:-right-8 sm:-bottom-6",
               )}
               duration={6}
               delay={0.8}
               distance={6}
             >
-              <div className="flex items-start gap-2.5">
-                <span className="relative flex size-8 shrink-0 items-center justify-center rounded-pill bg-warning-tint text-warning">
+              <div className="flex items-start gap-2 sm:gap-2.5">
+                <span className="relative flex size-7 shrink-0 items-center justify-center rounded-pill bg-warning-tint text-warning sm:size-8">
                   <TriangleAlert
-                    className="size-4"
+                    className="size-3.5 sm:size-4"
                     strokeWidth={1.75}
                     aria-hidden
                   />
@@ -300,7 +318,7 @@ export function Hero() {
                 </span>
                 <span className="block">
                   <span className="u-eyebrow block text-ink-3">Alerte ANSM</span>
-                  <span className="mt-1 block text-[0.78rem] font-medium leading-snug text-ink">
+                  <span className="mt-1 block text-[0.72rem] font-medium leading-snug text-ink sm:text-[0.78rem]">
                     Tension d’approvisionnement
                   </span>
                 </span>
