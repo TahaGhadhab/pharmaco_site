@@ -493,7 +493,7 @@ export function Visionneuse({
                    toute la boîte de dialogue — les boutons du haut et la
                    flèche de droite sortaient de l'écran, et la légende était
                    coupée. */
-                "relative h-full w-full min-w-0 overflow-hidden px-3 py-2 sm:px-16",
+                "relative flex h-full w-full min-w-0 items-center justify-center overflow-hidden px-3 py-2 sm:px-16",
                 /* `touch-none` : le pincement et le déplacement sont gérés ici,
                    le navigateur ne doit pas les interpréter en plus. */
                 "touch-none select-none",
@@ -519,7 +519,11 @@ export function Visionneuse({
                    au-delà de ses 500 px natifs : à sa taille d'origine, elle
                    occupait un tiers d'un écran d'ordinateur — on l'aurait
                    ouverte pour rien. Le zoom prend le relais au-delà. */
-                className="h-full w-full object-contain drop-shadow-2xl"
+                /* Plafond à 1000 px, soit deux fois les 500 px du fichier.
+                   Au-delà, on ne grossit plus une capture : on étale du flou.
+                   Le zoom reste disponible pour qui veut aller plus loin —
+                   c'est alors un geste délibéré, pas un défaut d'affichage. */
+                className="h-full max-h-[1000px] w-full max-w-[1000px] object-contain drop-shadow-2xl"
               />
             </div>
           </div>

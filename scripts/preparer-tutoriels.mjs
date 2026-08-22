@@ -146,10 +146,16 @@ for (const [numero, slug] of Object.entries(CAPTURES)) {
 
   const rgba = detourer(data, info.width, info.height, info.channels);
 
+  /* Encodage QUASI SANS PERTE, et pas une simple qualité 86.
+     Ces captures sont de l'interface : du texte fin et des aplats, ce que la
+     compression avec pertes traite le plus mal. Surtout, elles n'ont que
+     500 px pour un écran de téléphone qui en fait 1179 — le peu de finesse
+     qui reste, on ne l'entame pas pour gagner treize kilo-octets. Le fichier
+     passe de 9 à 22 ko, ce qui reste le poids d'une vignette. */
   const webp = await sharp(rgba, {
     raw: { width: info.width, height: info.height, channels: 4 },
   })
-    .webp({ quality: 86, alphaQuality: 90, effort: 6 })
+    .webp({ nearLossless: true, quality: 60, effort: 6 })
     .toBuffer();
 
   await writeFile(path.join(SORTIE, `${slug}.webp`), webp);
