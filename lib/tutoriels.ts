@@ -230,6 +230,19 @@ export const MODULES_TUTORIELS = [
           },
         ],
       },
+      {
+        id: "receptionner-une-commande",
+        titre: "Réceptionner une commande",
+        resume: "Ce qui est attendu, et ce qui est arrivé.",
+        etapes: [
+          {
+            image: "/tutoriels/commande-recevoir-1.webp",
+            alt: "Liste des commandes, onglet « À recevoir » : pour chacune, le fournisseur, le nombre de produits, la date, et un bouton « Réception ».",
+            legende:
+              "L'onglet « À recevoir » liste ce qui est attendu : le fournisseur, le nombre de produits et la date. Le bouton « Réception » bascule la commande dans « Reçues ».",
+          },
+        ],
+      },
     ],
   },
   {
@@ -283,6 +296,34 @@ export const MODULES_TUTORIELS = [
             alt: "Formulaire « Nouvelle location » : équipement, client, téléphone, périodicité de facturation hebdomadaire ou mensuelle, dates de début et de fin, caution et montant total.",
             legende:
               "Depuis le « + », « Nouvelle location ». L'équipement, le client, la périodicité de facturation, les dates, la caution et le montant : c'est ce qui alimente ensuite l'échéancier et le solde.",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "profil",
+    nom: "Mon profil",
+    titre: "Votre compte. Vos réglages.",
+    chapeau:
+      "Votre fiche personnelle, et la porte des préférences de l'application.",
+    tutoriels: [
+      {
+        id: "ouvrir-les-preferences",
+        titre: "Ouvrir vos préférences",
+        resume: "Où se règle l'apparence de l'application.",
+        etapes: [
+          /* ⛔ La capture livrée portait une adresse e-mail réelle, lisible
+             dans le champ « Email ». Elle est floutée à la conversion, via la
+             table `MASQUES` de `scripts/preparer-tutoriels.mjs` — le fichier
+             source, lui, n'est pas modifié. À remplacer par une capture prise
+             depuis un compte de démonstration dès que possible : un masque
+             est un garde-fou, pas une capture propre. */
+          {
+            image: "/tutoriels/profil-preferences-1.webp",
+            alt: "Écran « Mon profil » : prénom, nom et adresse d'identification, puis quatre entrées — préférences, notifications, sécurité et activité. « Préférences » est désignée.",
+            legende:
+              "« Mon profil » porte votre fiche, puis quatre entrées. « Préférences » ouvre les réglages d'apparence de l'application.",
           },
         ],
       },

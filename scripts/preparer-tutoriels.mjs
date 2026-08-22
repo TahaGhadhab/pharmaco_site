@@ -54,7 +54,60 @@ const CAPTURES = {
   19: "location-ouvrir-2",
   20: "location-ouvrir-3",
   13: "location-creer-1",
+  21: "commande-recevoir-1",
+  22: "profil-preferences-1",
 };
+
+/**
+ * Zones à masquer avant publication, par numéro de capture.
+ *
+ * ⛔ La capture 22 (« Mon profil ») porte une ADRESSE E-MAIL RÉELLE, lisible.
+ * Une donnée personnelle n'a rien à faire sur une page publique — et une fois
+ * la page en ligne, elle est indexée, archivée et hors de notre contrôle.
+ * Elle est donc floutée ici, à la conversion : le fichier source reste intact
+ * dans .screens-sources/, seule la version servie est masquée.
+ *
+ * Le vrai correctif est en amont : rejouer la capture depuis un compte de
+ * démonstration. Ce masque est un garde-fou, pas une solution.
+ *
+ * Coordonnées en pixels de l'image source, origine en haut à gauche.
+ */
+const MASQUES = {
+  22: [{ left: 152, top: 171, width: 197, height: 26 }],
+};
+
+/** Floute les zones demandées. Sans zone, l'image ressort telle quelle. */
+async function masquer(entree, zones) {
+  if (!zones || zones.length === 0) return entree;
+
+  const calques = await Promise.all(
+    zones.map(async (zone) => ({
+      input: await sharp(entree).extract(zone).blur(7).png().toBuffer(),
+      left: zone.left,
+      top: zone.top,
+    })),
+  );
+
+  return sharp(entree).composite(calques).png().toBuffer();
+}
+
+/**
+ * Retrouve le fichier source d'un numéro, quelle que soit son extension.
+ *
+ * Le client exporte tantôt en PNG, tantôt en JPEG : le numéro fait foi, pas
+ * le format. Un JPEG a déjà perdu ce qu'il a perdu — on ne le récupère pas,
+ * mais on n'en retire pas davantage.
+ */
+const EXTENSIONS = [".png", ".jpg", ".jpeg", ".webp"];
+
+function fichierDe(numero, fichiers) {
+  const point = (nom) => nom.lastIndexOf(".");
+  return fichiers.find(
+    (nom) =>
+      nom.slice(0, point(nom)) === String(numero) &&
+      EXTENSIONS.includes(nom.slice(point(nom)).toLowerCase()),
+  );
+}
 
 /**
  * Seuils du détourage, en luminance.
@@ -130,17 +183,19 @@ await mkdir(SORTIE, { recursive: true });
 
 const fichiers = await readdir(SOURCE);
 const manquants = Object.keys(CAPTURES).filter(
-  (numero) => !fichiers.includes(`${numero}.png`),
+  (numero) => !fichierDe(numero, fichiers),
 );
 if (manquants.length > 0) {
   throw new Error(
-    `Captures absentes de ${SOURCE} : ${manquants.map((n) => `${n}.png`).join(", ")}`,
+    `Captures absentes de ${SOURCE} : ${manquants.join(", ")}`,
   );
 }
 
 for (const [numero, slug] of Object.entries(CAPTURES)) {
-  const source = sharp(path.join(SOURCE, `${numero}.png`));
-  const { data, info } = await source
+  const chemin = path.join(SOURCE, fichierDe(numero, fichiers));
+  const masquee = await masquer(await sharp(chemin).png().toBuffer(), MASQUES[numero]);
+
+  const { data, info } = await sharp(masquee)
     .raw()
     .toBuffer({ resolveWithObject: true });
 

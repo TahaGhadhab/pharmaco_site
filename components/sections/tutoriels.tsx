@@ -8,6 +8,7 @@ import {
   Package,
   PlayCircle,
   ShoppingCart,
+  UserRound,
   ZoomIn,
 } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
@@ -42,6 +43,7 @@ const ICONES = {
   ordonnances: FileText,
   commandes: ShoppingCart,
   locations: Package,
+  profil: UserRound,
 } as const;
 
 /**
@@ -177,7 +179,8 @@ function Accordeon({
           </span>
 
           <span className="u-numeric hidden shrink-0 text-[0.72rem] text-ink-4 sm:block">
-            {tutoriel.etapes.length} étapes
+            {tutoriel.etapes.length} étape
+            {tutoriel.etapes.length > 1 ? "s" : ""}
           </span>
 
           <span
