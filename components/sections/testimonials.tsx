@@ -1,8 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Quote } from "lucide-react";
-import { motion, useAnimationFrame, useMotionValue } from "motion/react";
+import {
+  motion,
+  useAnimationFrame,
+  useMotionValue,
+  useReducedMotion,
+} from "motion/react";
 import { Eyebrow, Section } from "@/components/ui/primitives";
 import { Avatar } from "@/components/ui/avatar";
 import { Reveal } from "@/components/ui/reveal";
@@ -183,29 +188,24 @@ const VITESSE = 62;
  * les deux types de pointeur. `onPointerDown`/`onPointerUp` en secours,
  * au cas où un navigateur ne suivrait pas un doigt qui reste immobile.
  *
- * Ne tourne que si l'utilisateur accepte le mouvement (§11) : la préférence
- * est lue dans un effet, jamais pendant le rendu — un hook qui déciderait de
- * la sortie JSX elle-même désynchroniserait le HTML du serveur de celui du
- * client à l'hydratation (déjà rencontré sur cette section). Piste immobile,
- * `motion-reduce:` bascule le conteneur sur un défilement manuel classique.
+ * Ne tourne que si l'utilisateur accepte le mouvement (§11). La préférence
+ * vient de `useReducedMotion`, comme partout ailleurs sur le site — et elle ne
+ * gouverne QUE la boucle d'animation. Elle ne décide jamais de la sortie JSX :
+ * ce hook s'initialise pendant le rendu, il vaut `false` sur le serveur et peut
+ * valoir `true` à l'hydratation. Un JSX qui en dépendrait désynchroniserait les
+ * deux HTML — c'est ce qui était déjà arrivé sur cette section. Ici le rendu est
+ * le même dans les deux cas : piste immobile, et `motion-reduce:` bascule le
+ * conteneur sur un défilement manuel classique, en CSS pur.
  */
 function PisteAvis() {
   const pisteRef = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
   const vitesseActuelle = useRef(0);
   const [survole, setSurvole] = useState(false);
-  const [actif, setActif] = useState(false);
-
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setActif(false);
-      return;
-    }
-    setActif(true);
-  }, []);
+  const reduit = useReducedMotion();
 
   useAnimationFrame((_t, delta) => {
-    if (!actif || !pisteRef.current) return;
+    if (reduit || !pisteRef.current) return;
 
     const cible = survole ? 0 : VITESSE;
     const lissage = 1 - Math.exp(-delta / 220);
