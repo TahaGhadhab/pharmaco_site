@@ -101,12 +101,24 @@ export const site = {
     connexion: "Se connecter",
   },
 
+  /**
+   * Ancres de l'accueil.
+   *
+   * ⚠️ Préfixées par `/`, et ce n'est pas un détail : le header et le pied de
+   * page sont montés sur les pages annexes (`/tutoriels`, pages légales). Une
+   * ancre nue (`#faq`) y désigne un élément qui n'existe pas — le lien ne fait
+   * alors rien du tout. Avec le `/`, il ramène à l'accueil au bon endroit,
+   * depuis n'importe quelle page.
+   */
   nav: [
-    { label: "Le problème", href: "#probleme" },
-    { label: "Ce que ça coûte", href: "#simulateur" },
-    { label: "Fonctionnalités", href: "#fonctionnalites" },
-    { label: "Tarifs", href: "#tarifs" },
-    { label: "Visio", href: "#visio" },
-    { label: "Questions", href: "#faq" },
+    { label: "Le problème", href: "/#probleme" },
+    { label: "Ce que ça coûte", href: "/#simulateur" },
+    { label: "Fonctionnalités", href: "/#fonctionnalites" },
+    { label: "Tarifs", href: "/#tarifs" },
+    { label: "Visio", href: "/#visio" },
+    { label: "Questions", href: "/#faq" },
   ],
+
+  /** Pages à part entière — des URL, pas des ancres de l'accueil. */
+  pages: [{ label: "Tutoriels", href: "/tutoriels" }],
 } as const;

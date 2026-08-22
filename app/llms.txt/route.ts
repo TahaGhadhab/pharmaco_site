@@ -141,6 +141,7 @@ elle n'est pas vérifiée.
 ## Accès
 
 - Site : ${SITE_URL}
+- Tutoriels en images, par module : ${SITE_URL}/tutoriels
 - Application : ${site.urls.app}
 - Demande d'inscription (officine, adresse, FINESS) : ${site.urls.inscription}
 - Connexion par lien magique, officines déjà inscrites : ${site.urls.connexion}

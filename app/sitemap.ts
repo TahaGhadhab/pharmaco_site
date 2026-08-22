@@ -22,6 +22,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 1,
     },
+    /* Les tutoriels sont la seule autre page de contenu : une prise en main
+       en images, autonome, et une porte d'entrée légitime depuis la recherche. */
+    {
+      url: `${SITE_URL}/tutoriels`,
+      lastModified: DERNIERE_MODIFICATION,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
     /* Les pages légales sont indexables — elles participent à la confiance
        accordée au domaine — mais ne concurrencent pas l'accueil. */
     {

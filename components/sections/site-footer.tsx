@@ -10,7 +10,10 @@ import { site } from "@/lib/site";
  * PharmacoWork complète le LGO, il ne le remplace pas.
  */
 
-const LIENS_LEGAUX = [
+/* Les tutoriels sont une page, pas une ancre : ils vivent dans cette colonne
+   et non dans « Sur cette page ». */
+const LIENS_UTILES = [
+  ...site.pages,
   { label: "Mentions légales", href: "/mentions-legales" },
   { label: "Confidentialité", href: "/confidentialite" },
   { label: "Contact", href: site.urls.contact },
@@ -53,10 +56,10 @@ export function SiteFooter() {
               </ul>
             </nav>
 
-            <nav aria-label="Informations légales">
+            <nav aria-label="Informations et pages annexes">
               <p className="u-eyebrow text-ink-4">Informations</p>
               <ul className="mt-5 space-y-3">
-                {LIENS_LEGAUX.map((item) => (
+                {LIENS_UTILES.map((item) => (
                   <li key={item.label}>
                     <Link href={item.href} className={LIEN}>
                       {item.label}
